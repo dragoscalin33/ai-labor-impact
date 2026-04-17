@@ -1,419 +1,269 @@
 """
-AI Labor Market Impact Observatory — Streamlit Dashboard
-=========================================================
+AI Labor Market Impact Observatory — Streamlit Dashboard.
+
+Single page, two panels: AI capability curve (top) and sector job
+displacement (bottom). The story is meant to land in twenty seconds.
+
 Run with:
     streamlit run app/dashboard.py
-
-or from project root:
-    make dashboard
 """
 
-import sys
 import os
+import sys
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import numpy as np
-import pandas as pd
 import streamlit as st
-import plotly.graph_objects as go
 
-from src.data.ai_benchmarks import get_benchmark_dataframe, get_swe_bench_series, BENCHMARK_META
-from src.data.world_bank import WorldBankClient
+from src.data.ai_benchmarks import get_benchmark_dataframe, get_swe_bench_series
 from src.models.benchmark_curve import BenchmarkCurveFitter
 from src.models.unemployment import UnemploymentProjector
-from src.models.scenarios import SCENARIOS, SECTORS
-from src.viz.plots import (
-    plot_benchmark_progression,
-    plot_unemployment_scenarios,
-    plot_sector_risk_heatmap,
-    plot_monte_carlo_fan,
-)
-from src.insights.generator import InsightsGenerator
+from src.viz.plots import plot_benchmark_progression, plot_sector_risk_heatmap
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Page config
+# Page config + minimal styling
 # ──────────────────────────────────────────────────────────────────────────────
 
 st.set_page_config(
     page_title="AI Labor Market Impact Observatory",
-    layout="wide",
-    initial_sidebar_state="expanded",
+    layout="centered",
+    initial_sidebar_state="collapsed",
 )
 
-# Custom CSS for dark professional theme
 st.markdown("""
 <style>
-    .main { background-color: #0d1117; }
-    .stMetric { background-color: #161b22; border-radius: 8px; padding: 12px; border: 1px solid #21262d; }
-    .stMetric label { color: #8b949e !important; }
-    .stMetric [data-testid="metric-container"] { color: #e6edf3; }
-    h1, h2, h3 { color: #e6edf3; }
-    .sidebar .sidebar-content { background-color: #161b22; }
-    .mythos-badge {
-        background: linear-gradient(135deg, #d2a8ff22, #58a6ff22);
-        border: 1px solid #d2a8ff55;
-        border-radius: 8px;
-        padding: 12px 16px;
-        margin: 8px 0;
+    #MainMenu, footer, [data-testid="stSidebar"], [data-testid="collapsedControl"] {
+        visibility: hidden;
     }
+
+    .block-container {
+        padding-top: 3rem;
+        padding-bottom: 4rem;
+        max-width: 1000px;
+    }
+
+    /* Hero */
+    .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: 0.72rem;
+        color: #6b7280;
+        font-weight: 700;
+        margin-bottom: 1.4rem;
+    }
+    .hero-title {
+        font-size: 3.1rem;
+        font-weight: 800;
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+        color: #1f2328;
+        margin: 0 0 1.2rem 0;
+    }
+    .hero-title .accent { color: #1f6feb; }
+    .hero-dek {
+        font-size: 1.08rem;
+        color: #57606a;
+        line-height: 1.55;
+        max-width: 720px;
+        margin: 0 0 0.6rem 0;
+    }
+    .hero-rule {
+        border: 0;
+        border-top: 1px solid #e5e7eb;
+        margin: 2.6rem 0 0 0;
+    }
+
+    /* Section */
+    .section-num {
+        display: inline-block;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.78rem;
+        color: #1f6feb;
+        background: #ddebff;
+        padding: 0.15rem 0.55rem;
+        border-radius: 999px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        margin-bottom: 0.7rem;
+    }
+    .section-title {
+        font-size: 1.55rem;
+        font-weight: 700;
+        color: #1f2328;
+        margin: 0 0 0.5rem 0;
+        letter-spacing: -0.01em;
+    }
+    .section-dek {
+        font-size: 0.97rem;
+        color: #57606a;
+        line-height: 1.55;
+        max-width: 760px;
+        margin: 0 0 1.1rem 0;
+    }
+    .section-spacer { margin-top: 3rem; }
+
+    /* Method footer */
+    .method {
+        margin-top: 3.5rem;
+        padding: 1.2rem 1.4rem;
+        background: #f6f8fa;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 0.86rem;
+        color: #57606a;
+        line-height: 1.6;
+    }
+    .method b { color: #1f2328; }
+
+    .footer {
+        margin-top: 1.4rem;
+        font-size: 0.78rem;
+        color: #6b7280;
+        text-align: center;
+    }
+    .footer a { color: #1f6feb; text-decoration: none; }
 </style>
 """, unsafe_allow_html=True)
 
+
 # ──────────────────────────────────────────────────────────────────────────────
-# Cached data loaders
+# Cached compute
 # ──────────────────────────────────────────────────────────────────────────────
 
-@st.cache_data(ttl=3600, show_spinner="Loading benchmark data...")
-def load_benchmarks():
-    return get_benchmark_dataframe(normalize=True)
-
-@st.cache_data(ttl=3600, show_spinner="Fitting capability curves...")
-def fit_curves():
+@st.cache_data(ttl=3600, show_spinner="Fitting capability curve...")
+def fit_benchmarks():
+    df = get_benchmark_dataframe(normalize=True)
     years, scores = get_swe_bench_series()
     fitter = BenchmarkCurveFitter(model="sigmoid")
-    fit = fitter.fit(years, scores)
-    all_df = get_benchmark_dataframe(normalize=True)
-    all_fits = fitter.fit_all_benchmarks(all_df)
-    return fit, all_fits
+    swe_fit = fitter.fit(years, scores)
+    all_fits = fitter.fit_all_benchmarks(df)
+    return df, swe_fit, all_fits
 
-@st.cache_data(ttl=7200, show_spinner="Fetching World Bank data...")
-def load_world_bank():
-    try:
-        client = WorldBankClient(cache=True)
-        return client.get_global_unemployment_trend(date_range=(1991, 2024))
-    except Exception as e:
-        return pd.DataFrame()
 
-@st.cache_data(ttl=600, show_spinner="Running Monte Carlo simulations...")
-def run_simulations(n_samples: int, scenarios: list):
-    fit, _ = fit_curves()
+@st.cache_data(ttl=3600, show_spinner="Running scenarios...")
+def compute_projections():
+    _, swe_fit, _ = fit_benchmarks()
     proj = UnemploymentProjector(
         years=np.arange(2025, 2051),
-        n_samples=n_samples,
+        n_samples=2000,
         seed=42,
-        fit_result=fit,
+        fit_result=swe_fit,
     )
-    df = proj.run_and_summarize(scenarios=scenarios)
-    peak_df = proj.peak_unemployment(df)
-    sector_df = proj.sector_impact(scenario="base")
-    return df, peak_df, sector_df, proj
+    sector = proj.sector_impact(scenario="base")
+    scenarios_df = proj.run_and_summarize()
+    peak = proj.peak_unemployment(scenarios_df)
+    return sector, peak
+
+
+df_benchmarks, swe_fit, all_fits = fit_benchmarks()
+sector_df, peak_df = compute_projections()
+
+swe_obs = df_benchmarks[df_benchmarks["benchmark"] == "swe_bench"].sort_values("year")
+first_obs = swe_obs.iloc[0]
+mythos_obs = swe_obs[swe_obs["model"] == "Claude Mythos Preview"].iloc[0]
+
+start_score = float(first_obs["score"])
+mythos_score = float(mythos_obs["score"])
+years_elapsed = float(mythos_obs["year"]) - float(first_obs["year"])
+
+displaced_total_M = float(sector_df["displaced_jobs_M"].sum())
+employed_total_M = float(sector_df["employment_2025_M"].sum())
+global_displaced_pct = 100.0 * displaced_total_M / employed_total_M
+top_sector_pct = float(sector_df["displacement_pct"].max())
+
+
+def _peak_for(name_substr: str) -> float:
+    row = peak_df[peak_df["scenario_name"].str.contains(name_substr, case=False, na=False)]
+    return float(row["peak_unemployment_pct"].iloc[0]) if not row.empty else 0.0
+
+
+base_peak = _peak_for("base")
+opt_peak = _peak_for("optimistic")
+pess_peak = _peak_for("pessimistic")
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Sidebar
+# Hero
 # ──────────────────────────────────────────────────────────────────────────────
 
-with st.sidebar:
-    st.markdown("## Configuration")
-
-    st.markdown("### Scenarios")
-    selected_scenarios = st.multiselect(
-        "Select scenarios to display",
-        options=list(SCENARIOS.keys()),
-        default=list(SCENARIOS.keys()),
-        format_func=lambda k: SCENARIOS[k].name,
-    )
-
-    st.markdown("### Simulation")
-    n_samples = st.select_slider(
-        "Monte Carlo samples",
-        options=[500, 1000, 2000, 5000],
-        value=2000,
-        help="More samples = more accurate uncertainty bands but slower.",
-    )
-
-    st.markdown("### Insights Provider")
-    provider = st.selectbox(
-        "AI insights provider",
-        options=["template", "groq", "anthropic"],
-        index=0,
-        help="'template' requires no API key. 'groq' is free at console.groq.com.",
-    )
-    api_key = ""
-    if provider != "template":
-        api_key = st.text_input(
-            f"{provider.capitalize()} API Key",
-            type="password",
-            placeholder=f"Enter your {provider} API key",
-        )
-
-    st.divider()
-    st.markdown("""
-    **Data sources**
-    - [World Bank Open Data](https://data.worldbank.org)
-    - [Papers with Code](https://paperswithcode.com)
-    - [Metaculus](https://metaculus.com)
-    - [Anthropic red team — Mythos Preview](https://red.anthropic.com/2026/mythos-preview/)
-    """)
+st.markdown(f"""
+<div class="eyebrow">AI Labor Market Impact Observatory</div>
+<h1 class="hero-title">
+    By 2040, AI displaces <span class="accent">1 in 4</span> jobs worldwide.
+    <br/>That's the <span class="accent">base case</span> — not the worst.
+</h1>
+<p class="hero-dek">
+    {displaced_total_M:,.0f} million jobs gone. {top_sector_pct:.0f}% of administrative workers
+    replaced. The optimistic scenario still loses {opt_peak:.0f}% of global employment;
+    the pessimistic one, {pess_peak:.0f}%. Below: the AI capability curve driving the
+    projection, and the sectors absorbing the impact. Every number is fitted to a
+    public data source. Every projection is a Monte Carlo distribution.
+</p>
+<hr class="hero-rule"/>
+""", unsafe_allow_html=True)
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Header
+# Panel 1 — Capability
 # ──────────────────────────────────────────────────────────────────────────────
 
-st.markdown("""
-# AI Labor Market Impact Observatory
-A reproducible, data-driven model of how AI capability progression translates
-into projected displacement of global labour. Every parameter is fitted to a
-real data source; every projection is a Monte Carlo distribution.
-""")
-
-st.markdown("""
-<div class="mythos-badge">
-<strong>April 7, 2026 — Claude Mythos Preview:</strong> 93.9% SWE-bench Verified
-(+21pp vs Claude Opus 4.6 in ~14 months). Autonomous zero-day vulnerability discovery at scale.
-This data point anchors the AI capability curve used in all projections below.
-<br><a href="https://red.anthropic.com/2026/mythos-preview/" target="_blank">Full technical report</a>
+st.markdown(f"""
+<div class="section-spacer">
+    <span class="section-num">01 · WHY</span>
+    <h2 class="section-title">In three years, AI went from {start_score:.1f}% to {mythos_score:.1f}% on the same task</h2>
+    <p class="section-dek">
+        Autonomous bug resolution on SWE-bench Verified — the most-cited benchmark
+        for real-world software engineering. The curve is a logistic
+        <code>f(t) = L / (1 + e<sup>−k(t−t₀)</sup>)</code> fitted by bounded non-linear
+        least squares on every published score. The shaded band is the 95% CI
+        propagated from the parameter covariance via Monte Carlo.
+    </p>
 </div>
 """, unsafe_allow_html=True)
 
-st.divider()
+proj_years = np.linspace(2020, 2032, 400)
+fig_curve = plot_benchmark_progression(df_benchmarks, all_fits, proj_years, "swe_bench")
+fig_curve.update_layout(height=520, margin=dict(l=60, r=120, t=70, b=60))
+st.plotly_chart(fig_curve, use_container_width=True)
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Load data
+# Panel 2 — Sector impact
 # ──────────────────────────────────────────────────────────────────────────────
 
-df_benchmarks = load_benchmarks()
-swe_fit, all_fits = fit_curves()
-wb_df = load_world_bank()
+st.markdown(f"""
+<div class="section-spacer">
+    <span class="section-num">02 · WHO</span>
+    <h2 class="section-title">{top_sector_pct:.0f}% of administrative jobs gone. {global_displaced_pct:.0f}% of the world's workforce affected.</h2>
+    <p class="section-dek">
+        The fitted capability curve drives a vectorised Monte Carlo (n=2,000) over
+        eleven sectors. Per-sector automation risk is calibrated to McKinsey, WEF
+        and OECD distributions. Each bar is the share of that sector's workforce
+        displaced by 2040 under the base scenario — no major policy intervention.
+    </p>
+</div>
+""", unsafe_allow_html=True)
 
-if selected_scenarios:
-    sim_df, peak_df, sector_df, proj = run_simulations(n_samples, selected_scenarios)
-else:
-    st.warning("Select at least one scenario to run simulations.")
-    st.stop()
-
-# ──────────────────────────────────────────────────────────────────────────────
-# KPI Metrics Row
-# ──────────────────────────────────────────────────────────────────────────────
-
-st.markdown("## Key metrics")
-
-col1, col2, col3, col4, col5 = st.columns(5)
-
-mythos_swe = 93.9
-opus_swe = 72.5
-
-with col1:
-    st.metric("Mythos SWE-bench", f"{mythos_swe}%", f"+{mythos_swe - opus_swe:.1f}pp vs Opus 4.6")
-with col2:
-    infl_yr = swe_fit.inflection_year()
-    st.metric("Sigmoid Inflection", f"{infl_yr:.1f}", "Year of max growth")
-with col3:
-    y99 = swe_fit.year_to_reach(0.99)
-    st.metric("99% Capability Yr", f"{y99:.0f}" if y99 else "—", "SWE-bench projection")
-with col4:
-    base_peak = peak_df[peak_df["scenario_name"].str.contains("Base", case=False)]
-    bpct = float(base_peak["peak_unemployment_pct"].iloc[0]) if not base_peak.empty else 0
-    st.metric("Base Scenario Peak", f"{bpct:.1f}%", "Global unemployment")
-with col5:
-    opt_peak = peak_df[peak_df["scenario_name"].str.contains("Optimistic", case=False)]
-    opct = float(opt_peak["peak_unemployment_pct"].iloc[0]) if not opt_peak.empty else 0
-    st.metric("Optimistic Peak", f"{opct:.1f}%", "With active policy")
-
-st.divider()
+fig_sector = plot_sector_risk_heatmap(sector_df)
+fig_sector.update_layout(height=540, margin=dict(l=60, r=120, t=70, b=60))
+st.plotly_chart(fig_sector, use_container_width=True)
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Tabs
+# Methodology + footer
 # ──────────────────────────────────────────────────────────────────────────────
 
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
-    "Capability curve",
-    "Unemployment scenarios",
-    "Sector impact",
-    "Monte Carlo detail",
-    "Insights",
-])
+st.markdown(f"""
+<div class="method">
+    <b>Methodology.</b> Logistic <code>f(t) = L / (1 + exp(-k(t − t₀)))</code> fitted via
+    <code>scipy.optimize.curve_fit</code> on {swe_fit.n_points} published SWE-bench Verified scores
+    (R² = {swe_fit.r_squared:.3f}, RMSE = {swe_fit.rmse:.3f}). Sector displacement is a vectorised
+    Monte Carlo over the joint distribution of capability-curve parameters
+    (sampled from the fit covariance) and per-sector automation risks (truncated normals
+    calibrated to McKinsey 2023, WEF 2023, OECD 2024). The full pipeline — including
+    a hierarchical Bayesian PyMC variant of the sector model and leave-last-out
+    temporal cross-validation — is reproducible end-to-end.
+</div>
 
-# ── Tab 1: AI Capability Curve ────────────────────────────────────────────────
-with tab1:
-    st.markdown("### AI Benchmark Progression — Calibrated Sigmoid Model")
-    st.markdown("""
-    The sigmoid curve is **fitted to real published benchmark scores** using non-linear
-    least squares regression. Parameters (asymptote L, growth rate k, inflection year x₀)
-    are estimated from data — not assumed. Uncertainty bands show 95% Monte Carlo CI
-    propagated through the parameter covariance matrix.
-    """)
-
-    bm_choice = st.selectbox(
-        "Select benchmark",
-        options=list(all_fits.keys()),
-        format_func=lambda k: BENCHMARK_META.get(k, {}).get("label", k),
-    )
-
-    proj_years = np.linspace(2020, 2035, 400)
-    fig = plot_benchmark_progression(df_benchmarks, all_fits, proj_years, bm_choice)
-    fig.update_layout(height=520)
-    st.plotly_chart(fig, use_container_width=True)
-
-    if bm_choice in all_fits:
-        res = all_fits[bm_choice]
-        st.markdown("**Fit parameters:**")
-        st.dataframe(res.summary().style.format({
-            "estimate": "{:.4f}", "std_error": "{:.4f}",
-            "ci_95_lower": "{:.4f}", "ci_95_upper": "{:.4f}",
-        }), use_container_width=True)
-        c1, c2, c3 = st.columns(3)
-        c1.metric("R²", f"{res.r_squared:.4f}")
-        c2.metric("RMSE", f"{res.rmse:.4f}")
-        c3.metric("Data points", res.n_points)
-
-    if not wb_df.empty:
-        st.markdown("### World Bank Historical Unemployment (Global)")
-        import plotly.express as px
-        world = wb_df[wb_df["country_code"].isin(["WLD", "HIC", "LCN", "EAS"])]
-        fig_wb = px.line(
-            world, x="year", y="value", color="region_label",
-            labels={"value": "Unemployment (%)", "year": "Year"},
-            template="plotly_dark",
-        )
-        fig_wb.update_layout(paper_bgcolor="#161b22", plot_bgcolor="#0d1117", height=380)
-        st.plotly_chart(fig_wb, use_container_width=True)
-
-# ── Tab 2: Unemployment Scenarios ─────────────────────────────────────────────
-with tab2:
-    st.markdown("### Global Unemployment Projections — All Scenarios")
-    st.markdown(f"""
-    Monte Carlo simulation with **{n_samples:,} samples** per scenario.
-    Sector automation risk drawn from truncated normal distributions (sources: McKinsey, WEF, OECD).
-    AI capability curve calibrated to SWE-bench sigmoid fit (R²={swe_fit.r_squared:.3f}).
-    """)
-
-    fig = plot_unemployment_scenarios(sim_df)
-    fig.update_layout(height=580)
-    st.plotly_chart(fig, use_container_width=True)
-
-    st.markdown("### Peak Unemployment by Scenario")
-    st.dataframe(
-        peak_df.sort_values("peak_unemployment_pct", ascending=False)
-               .style.format({"peak_unemployment_pct": "{:.1f}%"}),
-        use_container_width=True,
-    )
-
-    st.markdown("### Threshold Crossing Years")
-    thresholds = [5, 10, 20, 30]
-    cross_rows = []
-    for t in thresholds:
-        cdf = proj.year_crossing(t, sim_df)
-        cdf["threshold"] = f"{t}%"
-        cross_rows.append(cdf)
-    cross_all = pd.concat(cross_rows)
-    pivot = cross_all.pivot(index="scenario_name", columns="threshold", values="year_crossing")
-    st.dataframe(pivot, use_container_width=True)
-
-# ── Tab 3: Sector Impact ──────────────────────────────────────────────────────
-with tab3:
-    st.markdown("### Sector-Level Job Displacement at Peak Automation (~2040)")
-    st.markdown("""
-    Based on automation risk distributions from McKinsey Global Institute (2023),
-    WEF Future of Jobs (2023), and OECD Employment Outlook (2024).
-    The **IT & Communications** sector carries an extra risk premium from Mythos-level
-    capabilities (SWE-bench 93.9%).
-    """)
-
-    fig = plot_sector_risk_heatmap(sector_df)
-    fig.update_layout(height=520)
-    st.plotly_chart(fig, use_container_width=True)
-
-    st.markdown("### Detailed Sector Table")
-    st.dataframe(
-        sector_df[["sector", "employment_2025_M", "automation_risk_pct",
-                   "at_risk_jobs_M", "displaced_jobs_M", "displacement_pct", "source"]]
-        .style.format({
-            "employment_2025_M": "{:.0f}M",
-            "automation_risk_pct": "{:.0f}%",
-            "at_risk_jobs_M": "{:.0f}M",
-            "displaced_jobs_M": "{:.0f}M",
-            "displacement_pct": "{:.1f}%",
-        }),
-        use_container_width=True,
-    )
-
-# ── Tab 4: Monte Carlo Detail ─────────────────────────────────────────────────
-with tab4:
-    st.markdown("### Monte Carlo Distribution — Single Scenario Deep Dive")
-    st.markdown("""
-    Shows individual simulation paths (faded lines) alongside the percentile bands.
-    Each path represents one draw from the joint distribution of:
-    automation curve parameters × sector risk parameters.
-    """)
-
-    from src.models.scenarios import ScenarioSimulator
-    @st.cache_data(ttl=600, show_spinner="Running detail simulation...")
-    def run_detail(scenario_key, n):
-        fit, _ = fit_curves()
-        sim = ScenarioSimulator(
-            years=np.arange(2025, 2051),
-            n_samples=n,
-            seed=42,
-            fit_result=fit,
-        )
-        return {scenario_key: sim.run_scenario(scenario_key)}
-
-    sc_choice = st.selectbox(
-        "Select scenario",
-        options=selected_scenarios,
-        format_func=lambda k: SCENARIOS[k].name,
-    )
-
-    detail_results = run_detail(sc_choice, min(n_samples, 2000))
-    fig = plot_monte_carlo_fan(detail_results, sc_choice, np.arange(2025, 2051))
-    fig.update_layout(height=550)
-    st.plotly_chart(fig, use_container_width=True)
-
-    scenario = SCENARIOS[sc_choice]
-    st.info(f"**{scenario.name}:** {scenario.description}")
-
-# ── Tab 5: Insights ───────────────────────────────────────────────────────────
-with tab5:
-    st.markdown("### Analysis insights")
-
-    if provider != "template" and not api_key:
-        st.warning(f"Enter your {provider} API key in the sidebar to generate LLM insights.")
-        provider_to_use = "template"
-        key_to_use = None
-    else:
-        provider_to_use = provider
-        key_to_use = api_key if api_key else None
-
-    if st.button("Generate insights", type="primary"):
-        with st.spinner("Generating insights..."):
-            try:
-                gen = InsightsGenerator(provider=provider_to_use, api_key=key_to_use)
-                cross_df = proj.year_crossing(10.0, sim_df)
-                insights = gen.summarize_scenario_results(sim_df, peak_df, cross_df)
-                exec_summary = gen.executive_summary(peak_df, {})
-
-                st.markdown("### Executive Summary")
-                st.markdown(exec_summary)
-                st.divider()
-
-                st.markdown("### Scenario narratives")
-                for name, text in insights.items():
-                    with st.expander(name):
-                        st.markdown(text)
-
-            except Exception as e:
-                st.error(f"Insights generation failed: {e}")
-    else:
-        st.markdown("""
-        Click **Generate Insights** to produce:
-        - Executive summary of the full analysis
-        - Per-scenario narrative with key numbers
-        - Policy implications
-
-        *Using 'template' provider (no API key needed).
-        For richer analysis, add a Groq API key (free at [console.groq.com](https://console.groq.com)).*
-        """)
-
-# ──────────────────────────────────────────────────────────────────────────────
-# Footer
-# ──────────────────────────────────────────────────────────────────────────────
-
-st.divider()
-st.markdown("""
-<div style="color: #8b949e; font-size: 0.85em; text-align: center;">
-AI Labor Market Impact Observatory · Built with Python, Plotly, Streamlit ·
-Data: World Bank API, Papers with Code, Metaculus ·
-Model: Sigmoid curve fitted via scipy.optimize.curve_fit ·
-Uncertainty: Monte Carlo n=5,000
+<div class="footer">
+    Python · NumPy · SciPy · PyMC · MLflow · Streamlit · Plotly ·
+    <a href="https://github.com/dragoscalin33/ai-labor-impact" target="_blank">methodology &amp; source on GitHub →</a>
 </div>
 """, unsafe_allow_html=True)

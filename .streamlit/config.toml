@@ -2,11 +2,11 @@
 # Streamlit Community Cloud.
 
 [theme]
-base = "dark"
-primaryColor = "#58a6ff"
-backgroundColor = "#0d1117"
-secondaryBackgroundColor = "#161b22"
-textColor = "#e6edf3"
+base = "light"
+primaryColor = "#1f6feb"
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#f6f8fa"
+textColor = "#1f2328"
 font = "sans serif"
 
 [server]

@@ -1,9 +1,9 @@
 """
-Professional Plotly Visualizations
-=====================================
-All charts use a consistent dark theme with Anthropic-inspired accent colors.
-Each function returns a Plotly Figure — renderable in notebooks, Streamlit,
-or saved as HTML/PNG/SVG.
+Plotly figures — light professional theme.
+
+Each function returns a Plotly Figure that renders identically in
+notebooks, Streamlit, and saved HTML/PNG/SVG. Colours and typography
+are centralised in THEME for one-line restyling.
 """
 
 from __future__ import annotations
@@ -13,43 +13,62 @@ import pandas as pd
 import plotly.graph_objects as go
 
 # ---------------------------------------------------------------------------
-# Theme constants
+# Theme constants — light palette
 # ---------------------------------------------------------------------------
 
 THEME = {
-    "bg": "#0d1117",
-    "paper": "#161b22",
-    "grid": "#21262d",
-    "text": "#e6edf3",
-    "text_muted": "#8b949e",
-    "accent": "#58a6ff",
-    "accent2": "#f78166",
-    "accent3": "#3fb950",
-    "mythos": "#d2a8ff",   # Purple for Mythos data point
+    "bg": "#ffffff",
+    "paper": "#ffffff",
+    "grid": "#e5e7eb",
+    "axis": "#9ca3af",
+    "text": "#111827",
+    "text_muted": "#6b7280",
+    "accent": "#1f6feb",
+    "accent2": "#f97316",
+    "accent3": "#16a34a",
+    "mythos": "#7c3aed",
 }
 
-FONT = dict(family="Inter, -apple-system, sans-serif", color=THEME["text"])
+FONT = dict(family="Inter, -apple-system, sans-serif", color=THEME["text"], size=13)
 
 BASE_LAYOUT = dict(
     paper_bgcolor=THEME["paper"],
     plot_bgcolor=THEME["bg"],
     font=FONT,
-    xaxis=dict(gridcolor=THEME["grid"], zerolinecolor=THEME["grid"]),
-    yaxis=dict(gridcolor=THEME["grid"], zerolinecolor=THEME["grid"]),
+    xaxis=dict(
+        gridcolor=THEME["grid"],
+        zerolinecolor=THEME["grid"],
+        linecolor=THEME["axis"],
+        tickfont=dict(color=THEME["text_muted"]),
+    ),
+    yaxis=dict(
+        gridcolor=THEME["grid"],
+        zerolinecolor=THEME["grid"],
+        linecolor=THEME["axis"],
+        tickfont=dict(color=THEME["text_muted"]),
+    ),
     legend=dict(
-        bgcolor="rgba(22,27,34,0.8)",
+        bgcolor="rgba(255,255,255,0.85)",
         bordercolor=THEME["grid"],
         borderwidth=1,
+        font=dict(color=THEME["text"]),
     ),
     margin=dict(l=60, r=30, t=70, b=60),
+    hoverlabel=dict(bgcolor="white", font_color=THEME["text"], bordercolor=THEME["grid"]),
 )
 
 
 def _apply_theme(fig: go.Figure, title: str = "", subtitle: str = "") -> go.Figure:
-    full_title = f"<b>{title}</b>" if not subtitle else f"<b>{title}</b><br><sup>{subtitle}</sup>"
+    if subtitle:
+        full_title = (
+            f"<b>{title}</b>"
+            f"<br><span style='font-size:12px;color:{THEME['text_muted']}'>{subtitle}</span>"
+        )
+    else:
+        full_title = f"<b>{title}</b>"
     fig.update_layout(
         **BASE_LAYOUT,
-        title=dict(text=full_title, font=dict(size=18), x=0.0, xanchor="left"),
+        title=dict(text=full_title, font=dict(size=18, color=THEME["text"]), x=0.0, xanchor="left"),
     )
     return fig
 
@@ -64,20 +83,17 @@ def plot_benchmark_progression(
     projection_years: np.ndarray | None = None,
     benchmark: str = "swe_bench",
 ) -> go.Figure:
-    """
-    Plot historical AI benchmark scores with fitted sigmoid curve and
-    95% uncertainty band.
+    data = df[df["benchmark"] == benchmark].sort_values("year").reset_index(drop=True)
 
-    The Mythos Preview data point is highlighted distinctly.
-    """
-    data = df[df["benchmark"] == benchmark].sort_values("year")
+    x_min = float(data["year"].min()) - 0.4
+    x_max = float(data["year"].max()) + 0.7
     proj_years = projection_years if projection_years is not None else np.linspace(
-        data["year"].min(), 2035, 300
+        x_min, x_max, 400
     )
+    proj_years = proj_years[(proj_years >= x_min) & (proj_years <= x_max)]
 
     fig = go.Figure()
 
-    # --- Uncertainty band (if fit available) ---
     if fit_results and benchmark in fit_results:
         fit = fit_results[benchmark]
         mean, lower, upper = fit.predict_with_uncertainty(proj_years)
@@ -86,7 +102,7 @@ def plot_benchmark_progression(
             x=np.concatenate([proj_years, proj_years[::-1]]),
             y=np.concatenate([upper * 100, (lower * 100)[::-1]]),
             fill="toself",
-            fillcolor="rgba(88,166,255,0.12)",
+            fillcolor="rgba(31,111,235,0.10)",
             line=dict(width=0),
             name="95% CI",
             showlegend=True,
@@ -97,32 +113,27 @@ def plot_benchmark_progression(
             x=proj_years,
             y=mean * 100,
             mode="lines",
-            line=dict(color=THEME["accent"], width=2.5, dash="dash"),
-            name="Fitted sigmoid (projected)",
+            line=dict(color=THEME["accent"], width=3),
+            name="Fitted sigmoid",
         ))
 
-        # Inflection year annotation
-        infl = fit.inflection_year()
-        fig.add_vline(
-            x=infl, line_dash="dot", line_color=THEME["accent"],
-            annotation_text=f"Inflection ~{infl:.0f}",
-            annotation_font_color=THEME["accent"],
-        )
-
-    # --- Observed data points (split Mythos vs others) ---
     normal = data[data["model"] != "Claude Mythos Preview"]
     mythos = data[data["model"] == "Claude Mythos Preview"]
 
-    for org, group in normal.groupby("organization"):
+    if not normal.empty:
         fig.add_trace(go.Scatter(
-            x=group["year"],
-            y=group["score"],
-            mode="markers+lines",
-            marker=dict(size=9, opacity=0.9),
-            line=dict(width=1, dash="dot"),
-            name=org,
-            text=group["model"],
-            hovertemplate="<b>%{text}</b><br>Year: %{x:.2f}<br>Score: %{y:.1f}%<extra></extra>",
+            x=normal["year"],
+            y=normal["score"],
+            mode="markers",
+            marker=dict(
+                size=10,
+                color="#1f2328",
+                opacity=0.85,
+                line=dict(color="white", width=1.5),
+            ),
+            name="Published model scores",
+            text=normal["model"] + " · " + normal["organization"],
+            hovertemplate="<b>%{text}</b><br>%{x:.2f} → %{y:.1f}%<extra></extra>",
         ))
 
     if not mythos.empty:
@@ -131,33 +142,69 @@ def plot_benchmark_progression(
             y=mythos["score"],
             mode="markers",
             marker=dict(
-                size=16,
+                size=20,
                 color=THEME["mythos"],
                 symbol="star",
-                line=dict(color="white", width=1.5),
+                line=dict(color="white", width=2),
             ),
-            name="Claude Mythos Preview",
+            name="Claude Mythos Preview (Apr 2026)",
             text=mythos["model"],
-            hovertemplate="<b>%{text}</b><br>Year: %{x:.2f}<br>Score: %{y:.1f}%<extra></extra>",
+            hovertemplate="<b>%{text}</b><br>%{x:.2f} → %{y:.1f}%<extra></extra>",
         ))
 
+    if not data.empty and not mythos.empty:
+        first = data.iloc[0]
+        last = mythos.iloc[0]
+        delta_pp = float(last["score"]) - float(first["score"])
+        delta_yr = float(last["year"]) - float(first["year"])
+
+        fig.add_annotation(
+            x=float(first["year"]), y=float(first["score"]),
+            text=f"<b>{int(first['year'])}</b>: only {first['score']:.1f}% of bugs",
+            showarrow=True, arrowhead=2, arrowsize=1, arrowwidth=1.5,
+            arrowcolor=THEME["text_muted"],
+            ax=70, ay=-40,
+            font=dict(size=12, color=THEME["text"]),
+            bgcolor="rgba(255,255,255,0.92)",
+            bordercolor=THEME["grid"], borderwidth=1, borderpad=5,
+        )
+
+        fig.add_annotation(
+            x=float(last["year"]), y=float(last["score"]),
+            text=(
+                f"<b>Apr {int(last['year'])}</b>: {last['score']:.1f}%<br>"
+                f"<span style='color:{THEME['mythos']}'>"
+                f"+{delta_pp:.0f}pp in {delta_yr:.0f} years</span>"
+            ),
+            showarrow=True, arrowhead=2, arrowsize=1, arrowwidth=1.5,
+            arrowcolor=THEME["mythos"],
+            ax=-90, ay=40,
+            font=dict(size=13, color=THEME["text"]),
+            bgcolor="rgba(255,255,255,0.95)",
+            bordercolor=THEME["mythos"], borderwidth=1.5, borderpad=6,
+        )
+
     benchmark_labels = {
-        "swe_bench": "SWE-bench Verified — Autonomous Bug Resolution (%)",
-        "humaneval": "HumanEval — Code Generation pass@1 (%)",
-        "mmlu": "MMLU — Multitask Knowledge Accuracy (%)",
+        "swe_bench": "AI's autonomous bug-fixing rate, year by year",
+        "humaneval": "AI's code-generation pass rate, year by year",
+        "mmlu": "AI's multitask knowledge accuracy, year by year",
     }
 
-    fig.update_yaxes(title="Score (%)", range=[0, 105])
-    fig.update_xaxes(title="Year")
+    fig.update_yaxes(title="Bugs solved autonomously (%)", range=[0, 105])
+    fig.update_xaxes(title="", range=[x_min, x_max])
 
     _apply_theme(
         fig,
         title=benchmark_labels.get(benchmark, benchmark),
         subtitle=(
-            "Calibrated sigmoid fit with 95% Monte Carlo uncertainty band | "
+            "Sigmoid fitted to every published score · Shaded band = 95% CI · "
             "Sources: Papers with Code, model cards"
         ),
     )
+    fig.update_layout(legend=dict(
+        orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1,
+        bgcolor="rgba(0,0,0,0)", bordercolor="rgba(0,0,0,0)",
+    ))
     return fig
 
 
@@ -166,12 +213,7 @@ def plot_benchmark_progression(
 # ---------------------------------------------------------------------------
 
 def plot_unemployment_scenarios(df: pd.DataFrame) -> go.Figure:
-    """
-    Fan chart showing unemployment projections across all scenarios.
-    Median line + P25-P75 band + P5-P95 outer band per scenario.
-    """
     fig = go.Figure()
-
     scenarios = df["scenario_key"].unique()
 
     for key in scenarios:
@@ -179,7 +221,6 @@ def plot_unemployment_scenarios(df: pd.DataFrame) -> go.Figure:
         color = s["color"].iloc[0]
         name = s["scenario_name"].iloc[0]
 
-        # Outer band (5–95)
         r, g, b = int(color[1:3], 16), int(color[3:5], 16), int(color[5:7], 16)
         fig.add_trace(go.Scatter(
             x=pd.concat([s["year"], s["year"].iloc[::-1]]),
@@ -191,18 +232,16 @@ def plot_unemployment_scenarios(df: pd.DataFrame) -> go.Figure:
             hoverinfo="skip",
         ))
 
-        # IQR band (25–75)
         fig.add_trace(go.Scatter(
             x=pd.concat([s["year"], s["year"].iloc[::-1]]),
             y=pd.concat([s["p75_pct"], s["p25_pct"].iloc[::-1]]),
             fill="toself",
-            fillcolor=f"rgba({r},{g},{b},0.18)",
+            fillcolor=f"rgba({r},{g},{b},0.20)",
             line=dict(width=0),
             showlegend=False,
             hoverinfo="skip",
         ))
 
-        # Median line
         fig.add_trace(go.Scatter(
             x=s["year"],
             y=s["median_pct"],
@@ -212,8 +251,7 @@ def plot_unemployment_scenarios(df: pd.DataFrame) -> go.Figure:
             hovertemplate=f"<b>{name}</b><br>Year: %{{x}}<br>Median: %{{y:.1f}}%<extra></extra>",
         ))
 
-    # Milestone markers
-    for year, label in [(2030, "~AGI Threshold"), (2026, "Mythos Preview")]:
+    for year, label in [(2030, "~AGI threshold"), (2026, "Mythos Preview")]:
         fig.add_vline(
             x=year, line_dash="dot", line_color=THEME["text_muted"], line_width=1,
             annotation_text=label,
@@ -221,15 +259,15 @@ def plot_unemployment_scenarios(df: pd.DataFrame) -> go.Figure:
             annotation_position="top right",
         )
 
-    fig.update_yaxes(title="Global Unemployment Rate (%)", range=[0, 75])
+    fig.update_yaxes(title="Global unemployment rate (%)", range=[0, 75])
     fig.update_xaxes(title="Year", range=[2025, 2050])
 
     _apply_theme(
         fig,
-        title="Global Unemployment Projections — AI Automation Scenarios",
+        title="Global unemployment projections — AI automation scenarios",
         subtitle=(
-            "Monte Carlo simulation (n=5,000) | Bands: P5–P95 outer, P25–P75 inner | "
-            "Sector risk sources: McKinsey, WEF, OECD"
+            "Monte Carlo (n=5,000) · Bands: P5–P95 outer, P25–P75 inner · "
+            "Sector risk: McKinsey, WEF, OECD"
         ),
     )
     return fig
@@ -240,46 +278,45 @@ def plot_unemployment_scenarios(df: pd.DataFrame) -> go.Figure:
 # ---------------------------------------------------------------------------
 
 def plot_sector_risk_heatmap(sector_df: pd.DataFrame) -> go.Figure:
-    """
-    Horizontal bar chart showing expected job displacement by sector at peak automation.
-    """
-    df = sector_df.sort_values("displaced_jobs_M")
+    df = sector_df.sort_values("displacement_pct")
 
     fig = go.Figure()
 
     fig.add_trace(go.Bar(
         y=df["sector"],
-        x=df["displaced_jobs_M"],
+        x=df["displacement_pct"],
         orientation="h",
         marker=dict(
             color=df["displacement_pct"],
             colorscale="RdYlGn_r",
-            colorbar=dict(title="Displacement %", tickfont=dict(color=THEME["text"])),
-            showscale=True,
+            cmin=0,
+            cmax=60,
+            showscale=False,
+            line=dict(color="white", width=1),
         ),
-        text=df["displaced_jobs_M"].apply(lambda x: f"{x:.0f}M"),
+        text=df["displacement_pct"].apply(lambda v: f"<b>{v:.0f}%</b> of jobs lost"),
         textposition="outside",
-        textfont=dict(color=THEME["text"]),
-        customdata=df[["employment_2025_M", "automation_risk_pct", "displacement_pct"]].values,
+        textfont=dict(color=THEME["text"], size=13),
+        customdata=df[["employment_2025_M", "automation_risk_pct", "displaced_jobs_M"]].values,
         hovertemplate=(
             "<b>%{y}</b><br>"
-            "Displaced: %{x:.1f}M jobs<br>"
+            "Workforce displaced: %{x:.1f}%<br>"
+            "Jobs displaced: %{customdata[2]:.1f}M<br>"
             "2025 employment: %{customdata[0]:.0f}M<br>"
-            "Automation risk: %{customdata[1]:.0f}%<br>"
-            "Displacement rate: %{customdata[2]:.1f}%"
+            "Automation risk: %{customdata[1]:.0f}%"
             "<extra></extra>"
         ),
     ))
 
-    fig.update_xaxes(title="Projected Displaced Jobs (Millions) by 2040")
+    fig.update_xaxes(title="Share of sector workforce displaced by 2040 (%)", range=[0, 75])
     fig.update_yaxes(title="")
 
     _apply_theme(
         fig,
-        title="Sector-Level Job Displacement at Peak Automation (~2040)",
+        title="Which sectors lose the most jobs to AI automation",
         subtitle=(
-            "Base scenario | Color intensity = % of sector workforce displaced | "
-            "Source: McKinsey, WEF, OECD"
+            "Base scenario, peak automation ~2040 · Bar = % of workers in that sector · "
+            "Label also shows absolute jobs displaced · Source: McKinsey, WEF, OECD"
         ),
     )
     return fig
@@ -294,10 +331,6 @@ def plot_monte_carlo_fan(
     scenario_key: str = "base",
     years: np.ndarray | None = None,
 ) -> go.Figure:
-    """
-    Shows the full distribution of Monte Carlo samples for one scenario,
-    including individual sample paths (faded) behind the statistics.
-    """
     res = results[scenario_key]
     y = years if years is not None else np.arange(2025, 2051)
     samples = res["samples"]
@@ -307,16 +340,14 @@ def plot_monte_carlo_fan(
 
     fig = go.Figure()
 
-    # Sample paths (first 200 for visual clarity)
     for i in range(min(200, samples.shape[0])):
         fig.add_trace(go.Scatter(
             x=y, y=samples[i] * 100,
             mode="lines",
-            line=dict(color=f"rgba({r},{g},{b},0.03)", width=1),
+            line=dict(color=f"rgba({r},{g},{b},0.04)", width=1),
             showlegend=False, hoverinfo="skip",
         ))
 
-    # Percentile bands
     for lo, hi, alpha in [(5, 95, 0.15), (25, 75, 0.30)]:
         fig.add_trace(go.Scatter(
             x=np.concatenate([y, y[::-1]]),
@@ -335,16 +366,13 @@ def plot_monte_carlo_fan(
         name="Median",
     ))
 
-    fig.update_yaxes(title="Unemployment Rate (%)", range=[0, 80])
+    fig.update_yaxes(title="Unemployment rate (%)", range=[0, 80])
     fig.update_xaxes(title="Year")
 
     _apply_theme(
         fig,
-        title=f"Monte Carlo Distribution — {res['scenario'].name}",
-        subtitle=(
-            f"n={samples.shape[0]:,} simulations | Faint lines = individual paths | "
-            f"{res['scenario'].description[:80]}..."
-        ),
+        title=f"Monte Carlo distribution — {res['scenario'].name}",
+        subtitle=f"n={samples.shape[0]:,} simulations · Faint lines = individual paths",
     )
     return fig
 
@@ -354,16 +382,13 @@ def plot_monte_carlo_fan(
 # ---------------------------------------------------------------------------
 
 def plot_metaculus_agi_forecast(forecast_df: pd.DataFrame) -> go.Figure:
-    """
-    Visualize Metaculus community predictions for AGI-related questions.
-    """
     if forecast_df.empty:
         fig = go.Figure()
         fig.add_annotation(
             text="No Metaculus data available (API may be unreachable)",
             showarrow=False, font=dict(size=14, color=THEME["text_muted"])
         )
-        _apply_theme(fig, "Metaculus AGI Forecast Summary")
+        _apply_theme(fig, "Metaculus AGI forecast summary")
         return fig
 
     df = forecast_df.dropna(subset=["community_median"]).copy()
@@ -394,13 +419,13 @@ def plot_metaculus_agi_forecast(forecast_df: pd.DataFrame) -> go.Figure:
     ))
 
     fig.update_xaxes(title="", tickangle=-25)
-    fig.update_yaxes(title="Community Probability (%)", range=[0, 110])
+    fig.update_yaxes(title="Community probability (%)", range=[0, 110])
 
     _apply_theme(
         fig,
-        title="Metaculus Community Forecasts — AGI Probability Questions",
+        title="Metaculus community forecasts — AGI probability questions",
         subtitle=(
-            "Real-time crowd-aggregated predictions | Error bars = IQR (Q1–Q3) | "
+            "Real-time crowd-aggregated predictions · Error bars = IQR (Q1–Q3) · "
             "Source: metaculus.com"
         ),
     )
