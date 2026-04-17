@@ -136,7 +136,7 @@ def plot_benchmark_progression(
                 symbol="star",
                 line=dict(color="white", width=1.5),
             ),
-            name="Claude Mythos Preview ⭐",
+            name="Claude Mythos Preview",
             text=mythos["model"],
             hovertemplate="<b>%{text}</b><br>Year: %{x:.2f}<br>Score: %{y:.1f}%<extra></extra>",
         ))

@@ -36,7 +36,6 @@ from src.insights.generator import InsightsGenerator
 
 st.set_page_config(
     page_title="AI Labor Market Impact Observatory",
-    page_icon="🤖",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -104,7 +103,7 @@ def run_simulations(n_samples: int, scenarios: list):
 # ──────────────────────────────────────────────────────────────────────────────
 
 with st.sidebar:
-    st.markdown("## ⚙️ Configuration")
+    st.markdown("## Configuration")
 
     st.markdown("### Scenarios")
     selected_scenarios = st.multiselect(
@@ -139,11 +138,11 @@ with st.sidebar:
 
     st.divider()
     st.markdown("""
-    **Data Sources**
-    - 🌍 [World Bank API](https://data.worldbank.org)
-    - 📊 [Papers with Code](https://paperswithcode.com)
-    - 🎯 [Metaculus](https://metaculus.com)
-    - 🔴 [Anthropic red.anthropic.com](https://red.anthropic.com/2026/mythos-preview/)
+    **Data sources**
+    - [World Bank Open Data](https://data.worldbank.org)
+    - [Papers with Code](https://paperswithcode.com)
+    - [Metaculus](https://metaculus.com)
+    - [Anthropic red team — Mythos Preview](https://red.anthropic.com/2026/mythos-preview/)
     """)
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -151,17 +150,18 @@ with st.sidebar:
 # ──────────────────────────────────────────────────────────────────────────────
 
 st.markdown("""
-# 🤖 AI Labor Market Impact Observatory
-**A data-driven analysis of AI capability progression and global employment displacement**
-*All projections use real data. All uncertainty is quantified. No hardcoded parameters.*
+# AI Labor Market Impact Observatory
+A reproducible, data-driven model of how AI capability progression translates
+into projected displacement of global labour. Every parameter is fitted to a
+real data source; every projection is a Monte Carlo distribution.
 """)
 
 st.markdown("""
 <div class="mythos-badge">
-⭐ <strong>April 7, 2026 — Claude Mythos Preview:</strong> 93.9% SWE-bench Verified
+<strong>April 7, 2026 — Claude Mythos Preview:</strong> 93.9% SWE-bench Verified
 (+21pp vs Claude Opus 4.6 in ~14 months). Autonomous zero-day vulnerability discovery at scale.
 This data point anchors the AI capability curve used in all projections below.
-<br><a href="https://red.anthropic.com/2026/mythos-preview/" target="_blank">→ Full technical report</a>
+<br><a href="https://red.anthropic.com/2026/mythos-preview/" target="_blank">Full technical report</a>
 </div>
 """, unsafe_allow_html=True)
 
@@ -185,7 +185,7 @@ else:
 # KPI Metrics Row
 # ──────────────────────────────────────────────────────────────────────────────
 
-st.markdown("## 📈 Key Metrics")
+st.markdown("## Key metrics")
 
 col1, col2, col3, col4, col5 = st.columns(5)
 
@@ -216,11 +216,11 @@ st.divider()
 # ──────────────────────────────────────────────────────────────────────────────
 
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
-    "🧠 AI Capability Curve",
-    "📉 Unemployment Scenarios",
-    "🏭 Sector Impact",
-    "🎲 Monte Carlo Detail",
-    "💡 Insights",
+    "Capability curve",
+    "Unemployment scenarios",
+    "Sector impact",
+    "Monte Carlo detail",
+    "Insights",
 ])
 
 # ── Tab 1: AI Capability Curve ────────────────────────────────────────────────
@@ -364,7 +364,7 @@ with tab4:
 
 # ── Tab 5: Insights ───────────────────────────────────────────────────────────
 with tab5:
-    st.markdown("### 💡 AI-Generated Analysis Insights")
+    st.markdown("### Analysis insights")
 
     if provider != "template" and not api_key:
         st.warning(f"Enter your {provider} API key in the sidebar to generate LLM insights.")
@@ -374,7 +374,7 @@ with tab5:
         provider_to_use = provider
         key_to_use = api_key if api_key else None
 
-    if st.button("🔄 Generate Insights", type="primary"):
+    if st.button("Generate insights", type="primary"):
         with st.spinner("Generating insights..."):
             try:
                 gen = InsightsGenerator(provider=provider_to_use, api_key=key_to_use)
@@ -386,9 +386,9 @@ with tab5:
                 st.markdown(exec_summary)
                 st.divider()
 
-                st.markdown("### Scenario Narratives")
+                st.markdown("### Scenario narratives")
                 for name, text in insights.items():
-                    with st.expander(f"📌 {name}"):
+                    with st.expander(name):
                         st.markdown(text)
 
             except Exception as e:
