@@ -23,7 +23,13 @@ jobs:
           cache: "pip"
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        # Lean runtime + the dev/test tooling (ruff, mypy, pytest, coverage).
+        # We avoid `requirements-dev.txt` here on purpose — that pulls in
+        # PyMC + MLflow which aren't needed to lint or run the unit tests
+        # and would slow CI by ~5 min for no benefit.
+        run: |
+          pip install -r requirements.txt
+          pip install ruff mypy pytest pytest-cov
 
       - name: Lint with ruff
         run: ruff check src/ tests/
@@ -32,7 +38,7 @@ jobs:
         run: mypy src/ --ignore-missing-imports
 
       - name: Run tests
-        run: pytest tests/ -v --cov=src --cov-report=xml
+        run: pytest tests/ -v --override-ini="addopts=" --cov=src --cov-report=xml
         env:
           # Tests use only public APIs — no keys needed for CI
           CI: true
