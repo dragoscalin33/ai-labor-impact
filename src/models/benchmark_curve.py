@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import logging
 import warnings
+from collections.abc import Callable
 from dataclasses import dataclass
 
 import numpy as np
@@ -189,6 +190,7 @@ class BenchmarkCurveFitter:
         years = np.asarray(years, dtype=float)
         scores = np.asarray(scores, dtype=float)
 
+        func: Callable[..., np.ndarray]
         if self.model == "sigmoid":
             func = sigmoid
             param_names = ["L (asymptote)", "k (growth rate)", "x0 (inflection year)"]

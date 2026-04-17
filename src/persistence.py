@@ -18,7 +18,7 @@ from __future__ import annotations
 import json
 import pickle
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -76,7 +76,7 @@ def save_run(
     y99 = fit_result.year_to_reach(0.99)
     artifact = RunArtifact(
         name=name,
-        created_at=datetime.now(UTC).isoformat(timespec="seconds"),
+        created_at=datetime.now(timezone.utc).isoformat(timespec="seconds"),
         data_version=DATA_VERSION,
         seed=seed,
         n_samples=n_samples,

@@ -105,7 +105,7 @@ class WorldBankClient:
             return pd.read_parquet(cache_path)
 
         url = f"{BASE_URL}/country/{country_str}/indicator/{indicator}"
-        params = {
+        params: dict[str, str | int] = {
             "format": "json",
             "per_page": self.per_page,
             "date": date_str,

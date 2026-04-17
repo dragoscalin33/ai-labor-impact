@@ -247,7 +247,7 @@ def log_scenario_run(
 
 def log_dataclass_params(obj: Any, prefix: str = "") -> None:
     """Best-effort log of a dataclass instance as MLflow params."""
-    if not is_dataclass(obj):
+    if not is_dataclass(obj) or isinstance(obj, type):
         return
     mlflow = _import_mlflow()
     for k, v in asdict(obj).items():

@@ -73,13 +73,12 @@ class TemporalCVResult:
         return float(np.mean(inside))
 
     def to_dataframe(self) -> pd.DataFrame:
+        n = len(self.holdout_years)
         return pd.DataFrame(
             {
                 "year": self.holdout_years,
-                "model": self.holdout_models or [None] * len(self.holdout_years),
-                "organization": (
-                    self.holdout_organization or [None] * len(self.holdout_years)
-                ),
+                "model": self.holdout_models or [""] * n,
+                "organization": self.holdout_organization or [""] * n,
                 "observed": self.holdout_observed,
                 "predicted": self.holdout_predicted,
                 "lower_95": self.holdout_lower_95,
