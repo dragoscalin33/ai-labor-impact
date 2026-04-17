@@ -1,0 +1,26 @@
+# Full dev install — everything: lean runtime + Bayesian + tracking + tooling.
+-r requirements-bayesian.txt
+-r requirements-tracking.txt
+
+# Notebooks + chart export
+jupyter>=1.0.0
+nbformat>=5.9.0
+matplotlib>=3.8.0
+seaborn>=0.13.0
+kaleido>=0.2.1
+
+# Extra data sources
+wbdata>=1.0.0
+fredapi>=0.5.1
+
+# Async helpers
+tqdm>=4.66.0
+joblib>=1.3.0
+
+# Quality / tests
+pytest>=7.4.0
+pytest-cov>=4.1.0
+black>=23.12.0
+ruff>=0.1.9
+mypy>=1.8.0
+pre-commit>=3.6.0

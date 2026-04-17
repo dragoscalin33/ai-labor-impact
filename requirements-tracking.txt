@@ -1,0 +1,4 @@
+# Optional — needed only by `src/tracking/` (MLflow run logging).
+# Run `mlflow ui` after enabling this to inspect the experiment history.
+-r requirements.txt
+mlflow>=2.10.0

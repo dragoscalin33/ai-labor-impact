@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Secrets — NEVER commit
+.env
+*.pem
+*.key
+
+# Data cache (regenerated from APIs)
+data/cache/
+data/raw/
+data/processed/
+
+# Generated charts (regenerated from code)
+chart_*.html
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Testing
+.pytest_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# Misc
+*.log
+.coverage*
+
+# MLflow + run artifacts
+mlruns/
+mlartifacts/
+artifacts/tmp/
+
+# Streamlit secrets — never commit
+.streamlit/secrets.toml

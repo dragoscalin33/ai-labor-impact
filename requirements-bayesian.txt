@@ -1,0 +1,6 @@
+# Optional — needed only by `src/models/bayesian.py` and the notebook
+# `notebooks/04_bayesian_sector_risk.ipynb`. Adds ~5 min to a cold install
+# because PyMC pulls in PyTensor and a C compiler.
+-r requirements.txt
+pymc>=5.10.0
+arviz>=0.17.0
