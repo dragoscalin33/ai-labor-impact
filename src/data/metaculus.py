@@ -18,7 +18,7 @@ import requests
 
 logger = logging.getLogger(__name__)
 
-CACHE_DIR = Path(__file__).parents[3] / "data" / "cache"
+CACHE_DIR = Path(__file__).parents[2] / "data" / "cache"
 BASE_URL = "https://www.metaculus.com/api2"
 
 # Curated AGI-related question IDs on Metaculus

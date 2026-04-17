@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 BASE_URL = "https://api.worldbank.org/v2"
-CACHE_DIR = Path(__file__).parents[3] / "data" / "cache"
+CACHE_DIR = Path(__file__).parents[2] / "data" / "cache"
 
 # Key indicators
 INDICATORS: dict[str, str] = {
