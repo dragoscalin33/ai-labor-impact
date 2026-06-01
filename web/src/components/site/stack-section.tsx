@@ -56,6 +56,7 @@ export function StackSection() {
     >
       <div className="mx-auto w-full max-w-[1080px]">
         <SectionHeading
+          accent="stone"
           eyebrow="Code & stack"
           title="Python engine on one side, Next.js vitrine on the other."
           description="The model code is unchanged from the engine repository; the site reads its precomputed JSON artefacts."

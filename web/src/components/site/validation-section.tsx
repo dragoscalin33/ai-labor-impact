@@ -11,6 +11,7 @@ export async function ValidationSection() {
     <section id="validation" className="border-t border-border/60 px-6 py-24">
       <div className="mx-auto w-full max-w-[1080px]">
         <SectionHeading
+          accent="emerald"
           eyebrow="Validation"
           title="Out-of-sample, not just R² on the training data."
           description="Progressive leave-last-out temporal cross-validation on the SWE-bench Verified series. At each cutoff, the sigmoid is fitted exclusively on observations published before that date; the held-out points are then projected with their 95 % confidence interval."

@@ -57,6 +57,7 @@ export async function SectorHeatmapSection() {
     >
       <div className="mx-auto w-full max-w-[1080px]">
         <SectionHeading
+          accent="teal"
           eyebrow="Sector impact"
           title="Where displacement concentrates, decade by decade."
           description="Mean displacement percentage under the base scenario, projected per sector and decade. Driven by the fitted sigmoid times per-sector mean risk and direct-replace fraction, net of mitigation. Sectors are ordered by 2025 employment weight; values saturate as the capability curve plateaus."

@@ -33,6 +33,12 @@ const BLOCKS: Block[] = [
     source: "src/validation/temporal_cv.py",
     href: `${GITHUB_BLOB}/src/validation/temporal_cv.py`,
   },
+  {
+    title: "Known limitations",
+    body: "Capability is proxied by a single bounded benchmark (SWE-bench, 0–100 %). The fitted sigmoid already has its inflection year at 2024.67 and is close to its asymptote, so all four scenarios converge against the same ceiling — the spread between Base, Pessimistic and Mythos-accelerated is one percentage point at peak. That is the cost of using a saturating benchmark as the capability axis; once the benchmark saturates, the model underestimates the right tail. v2 replaces the single-benchmark sigmoid with a chained-benchmark envelope (SWE-bench → SWE-bench Hard → task-completion-rate). Until then, read every projection here as correct on validation, conservative on tail risk, and explicit about why.",
+    source: "src/models/scenarios.py",
+    href: `${GITHUB_BLOB}/src/models/scenarios.py`,
+  },
 ];
 
 export function MethodologySection() {
@@ -40,6 +46,7 @@ export function MethodologySection() {
     <section id="methodology" className="border-t border-border/60 px-6 py-24">
       <div className="mx-auto w-full max-w-[1080px]">
         <SectionHeading
+          accent="sky"
           eyebrow="Methodology"
           title="Four modelling blocks, each auditable in isolation."
           description="Each artefact on this page is regenerated from one of these blocks. The Python engine is unchanged; the site is a thin presentation layer over its JSON output."

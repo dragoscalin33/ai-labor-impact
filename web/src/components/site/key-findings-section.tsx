@@ -50,8 +50,9 @@ export async function KeyFindingsSection() {
       className="px-6 py-24"
     >
       <div className="mx-auto w-full max-w-[1080px]">
-        <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
-          Key findings
+        <p className="flex items-center gap-3 text-xs font-medium uppercase tracking-[0.16em] text-indigo-600 dark:text-indigo-400">
+          <span aria-hidden className="inline-block h-3 w-[3px] rounded-full bg-indigo-500" />
+          <span>Key findings</span>
         </p>
         <h2 className="font-heading mt-3 max-w-3xl text-3xl font-medium tracking-tight text-foreground sm:text-[2rem]">
           Four numbers that anchor the rest of the model.

@@ -18,13 +18,13 @@ export default function HomePage() {
       <main id="main-content" className="flex flex-1 flex-col">
         <HeroSection />
         <KeyFindingsSection />
-        <CapabilityCurveSection />
         <SelectedScenarioProvider initial="base">
           <ScenariosSection />
           <SectorHeatmapSection />
-          <ValidationSection />
           <InsightsSection />
         </SelectedScenarioProvider>
+        <CapabilityCurveSection />
+        <ValidationSection />
         <MethodologySection />
         <StackSection />
       </main>

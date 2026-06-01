@@ -122,7 +122,7 @@ function ChartTooltip({ active, payload, label }: ChartTooltipProps) {
   return (
     <div className="rounded-md border border-border bg-background/95 px-3 py-2 text-xs shadow-sm">
       <div className="font-medium text-foreground">
-        Year {typeof label === "number" ? label.toFixed(2) : label}
+        Year {typeof label === "number" ? Math.round(label) : label}
       </div>
       {pointRows.map((row) => (
         <div key={row.key} className="mt-1 text-muted-foreground">

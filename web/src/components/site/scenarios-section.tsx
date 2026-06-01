@@ -150,6 +150,7 @@ export async function ScenariosSection() {
     <section id="scenarios" className="border-t border-border/60 px-6 py-24">
       <div className="mx-auto w-full max-w-[1080px]">
         <SectionHeading
+          accent="amber"
           eyebrow="Scenarios"
           title="Four policy worlds, with full Monte Carlo uncertainty."
           description={`Each scenario draws ${scenarios.n_samples.toLocaleString()} parameter samples from the fit covariance and from sector-risk truncated normals calibrated to McKinsey, WEF and OECD. The shaded bands are the P25–P75 (inner) and P05–P95 (outer) Monte Carlo intervals; the line is the median.`}

@@ -10,6 +10,7 @@ export async function CapabilityCurveSection() {
     <section id="curve" className="border-t border-border/60 bg-muted/30 px-6 py-24">
       <div className="mx-auto w-full max-w-[1080px]">
         <SectionHeading
+          accent="violet"
           eyebrow="Capability curve"
           title="A sigmoid fitted to public AI benchmark scores."
           description={`Logistic fit to ${data.fit.n_points} SWE-bench Verified observations via bounded non-linear least squares. R² = ${data.fit.r_squared.toFixed(
