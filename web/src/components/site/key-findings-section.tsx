@@ -47,7 +47,7 @@ export async function KeyFindingsSection() {
   return (
     <section
       id="findings"
-      className="border-t border-border/60 px-6 py-16"
+      className="border-t border-border/60 bg-muted/30 px-6 py-16"
     >
       <div className="mx-auto w-full max-w-[1080px]">
         <p className="flex items-center gap-3 text-xs font-medium uppercase tracking-[0.16em] text-indigo-600 dark:text-indigo-400">
