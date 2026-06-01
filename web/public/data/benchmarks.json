@@ -1,0 +1,750 @@
+{
+  "data_version": "2026.04.07",
+  "benchmark": "swe_bench",
+  "benchmark_label": "SWE-bench Verified",
+  "series": [
+    {
+      "year": 2021.6,
+      "score": 28.8,
+      "score_norm": 0.288,
+      "model": "Codex 12B",
+      "organization": "OpenAI",
+      "benchmark": "humaneval",
+      "source": "Chen et al. 2021 (arXiv:2107.03374)",
+      "notes": ""
+    },
+    {
+      "year": 2022.75,
+      "score": 48.1,
+      "score_norm": 0.481,
+      "model": "GPT-3.5-Turbo",
+      "organization": "OpenAI",
+      "benchmark": "humaneval",
+      "source": "Papers with Code leaderboard",
+      "notes": ""
+    },
+    {
+      "year": 2023.25,
+      "score": 67.0,
+      "score_norm": 0.67,
+      "model": "GPT-4",
+      "organization": "OpenAI",
+      "benchmark": "humaneval",
+      "source": "OpenAI GPT-4 Technical Report",
+      "notes": ""
+    },
+    {
+      "year": 2024.25,
+      "score": 84.9,
+      "score_norm": 0.849,
+      "model": "Claude 3 Opus",
+      "organization": "Anthropic",
+      "benchmark": "humaneval",
+      "source": "Anthropic model card March 2024",
+      "notes": ""
+    },
+    {
+      "year": 2024.4,
+      "score": 90.2,
+      "score_norm": 0.902,
+      "model": "GPT-4o",
+      "organization": "OpenAI",
+      "benchmark": "humaneval",
+      "source": "OpenAI GPT-4o system card",
+      "notes": ""
+    },
+    {
+      "year": 2025.1,
+      "score": 93.4,
+      "score_norm": 0.934,
+      "model": "Claude Opus 4.6",
+      "organization": "Anthropic",
+      "benchmark": "humaneval",
+      "source": "Anthropic model card February 2025",
+      "notes": ""
+    },
+    {
+      "year": 2026.27,
+      "score": 97.1,
+      "score_norm": 0.971,
+      "model": "Claude Mythos Preview",
+      "organization": "Anthropic",
+      "benchmark": "humaneval",
+      "source": "red.anthropic.com/2026/mythos-preview/",
+      "notes": ""
+    },
+    {
+      "year": 2020.75,
+      "score": 43.9,
+      "score_norm": 0.439,
+      "model": "GPT-3 (175B)",
+      "organization": "OpenAI",
+      "benchmark": "mmlu",
+      "source": "Hendrycks et al. 2021 (arXiv:2009.03300)",
+      "notes": ""
+    },
+    {
+      "year": 2022.75,
+      "score": 70.0,
+      "score_norm": 0.7,
+      "model": "GPT-3.5-Turbo",
+      "organization": "OpenAI",
+      "benchmark": "mmlu",
+      "source": "Papers with Code leaderboard",
+      "notes": ""
+    },
+    {
+      "year": 2023.25,
+      "score": 86.4,
+      "score_norm": 0.864,
+      "model": "GPT-4",
+      "organization": "OpenAI",
+      "benchmark": "mmlu",
+      "source": "OpenAI GPT-4 Technical Report",
+      "notes": ""
+    },
+    {
+      "year": 2024.25,
+      "score": 88.7,
+      "score_norm": 0.887,
+      "model": "Claude 3 Opus",
+      "organization": "Anthropic",
+      "benchmark": "mmlu",
+      "source": "Anthropic model card March 2024",
+      "notes": ""
+    },
+    {
+      "year": 2024.4,
+      "score": 88.7,
+      "score_norm": 0.887,
+      "model": "GPT-4o",
+      "organization": "OpenAI",
+      "benchmark": "mmlu",
+      "source": "OpenAI GPT-4o system card",
+      "notes": ""
+    },
+    {
+      "year": 2025.1,
+      "score": 91.2,
+      "score_norm": 0.912,
+      "model": "Claude Opus 4.6",
+      "organization": "Anthropic",
+      "benchmark": "mmlu",
+      "source": "Anthropic model card February 2025",
+      "notes": ""
+    },
+    {
+      "year": 2026.27,
+      "score": 94.5,
+      "score_norm": 0.945,
+      "model": "Claude Mythos Preview",
+      "organization": "Anthropic",
+      "benchmark": "mmlu",
+      "source": "red.anthropic.com/2026/mythos-preview/",
+      "notes": ""
+    },
+    {
+      "year": 2023.25,
+      "score": 1.7,
+      "score_norm": 0.017,
+      "model": "GPT-4 (0314)",
+      "organization": "OpenAI",
+      "benchmark": "swe_bench",
+      "source": "Jimenez et al. 2024 (arXiv:2310.06770)",
+      "notes": "Initial baseline"
+    },
+    {
+      "year": 2023.6,
+      "score": 4.8,
+      "score_norm": 0.048,
+      "model": "Claude 2",
+      "organization": "Anthropic",
+      "benchmark": "swe_bench",
+      "source": "SWE-bench leaderboard 2023",
+      "notes": ""
+    },
+    {
+      "year": 2024.4,
+      "score": 33.2,
+      "score_norm": 0.332,
+      "model": "GPT-4o",
+      "organization": "OpenAI",
+      "benchmark": "swe_bench",
+      "source": "SWE-bench Verified leaderboard May 2024",
+      "notes": ""
+    },
+    {
+      "year": 2024.6,
+      "score": 49.0,
+      "score_norm": 0.49,
+      "model": "Claude 3.5 Sonnet",
+      "organization": "Anthropic",
+      "benchmark": "swe_bench",
+      "source": "Anthropic model card, SWE-bench Verified",
+      "notes": ""
+    },
+    {
+      "year": 2024.75,
+      "score": 41.3,
+      "score_norm": 0.413,
+      "model": "o1-preview",
+      "organization": "OpenAI",
+      "benchmark": "swe_bench",
+      "source": "OpenAI o1 system card",
+      "notes": ""
+    },
+    {
+      "year": 2024.83,
+      "score": 64.0,
+      "score_norm": 0.64,
+      "model": "Claude 3.5 Sonnet (Oct)",
+      "organization": "Anthropic",
+      "benchmark": "swe_bench",
+      "source": "Anthropic model card October 2024 update",
+      "notes": ""
+    },
+    {
+      "year": 2025.1,
+      "score": 72.5,
+      "score_norm": 0.725,
+      "model": "Claude Opus 4.6",
+      "organization": "Anthropic",
+      "benchmark": "swe_bench",
+      "source": "Anthropic model card February 2025",
+      "notes": ""
+    },
+    {
+      "year": 2025.15,
+      "score": 70.3,
+      "score_norm": 0.703,
+      "model": "Claude Sonnet 4.6",
+      "organization": "Anthropic",
+      "benchmark": "swe_bench",
+      "source": "Anthropic model card February 2025",
+      "notes": ""
+    },
+    {
+      "year": 2026.27,
+      "score": 93.9,
+      "score_norm": 0.939,
+      "model": "Claude Mythos Preview",
+      "organization": "Anthropic",
+      "benchmark": "swe_bench",
+      "source": "red.anthropic.com/2026/mythos-preview/ — April 7 2026",
+      "notes": "Invitation-only; cybersecurity research preview"
+    }
+  ],
+  "fit": {
+    "model": "sigmoid",
+    "L": 0.952646,
+    "k": 2.452636,
+    "x0": 2024.665831,
+    "ci_95": {
+      "L": [
+        0.783043,
+        1.122249
+      ],
+      "k": [
+        1.268499,
+        3.636773
+      ],
+      "x0": [
+        2024.465042,
+        2024.866619
+      ]
+    },
+    "r_squared": 0.972106,
+    "rmse": 0.048963,
+    "n_points": 9,
+    "inflection_year": 2024.665831,
+    "year_to_reach_99": null,
+    "ci_grid": [
+      {
+        "year": 2010.0,
+        "low": 0.0,
+        "mid": 0.0,
+        "high": 0.0
+      },
+      {
+        "year": 2010.25,
+        "low": 0.0,
+        "mid": 0.0,
+        "high": 0.0
+      },
+      {
+        "year": 2010.5,
+        "low": 0.0,
+        "mid": 0.0,
+        "high": 0.0
+      },
+      {
+        "year": 2010.75,
+        "low": 0.0,
+        "mid": 0.0,
+        "high": 0.0
+      },
+      {
+        "year": 2011.0,
+        "low": 0.0,
+        "mid": 0.0,
+        "high": 0.0
+      },
+      {
+        "year": 2011.25,
+        "low": 0.0,
+        "mid": 0.0,
+        "high": 0.0
+      },
+      {
+        "year": 2011.5,
+        "low": 0.0,
+        "mid": 0.0,
+        "high": 0.0
+      },
+      {
+        "year": 2011.75,
+        "low": 0.0,
+        "mid": 0.0,
+        "high": 0.0
+      },
+      {
+        "year": 2012.0,
+        "low": 0.0,
+        "mid": 0.0,
+        "high": 0.0
+      },
+      {
+        "year": 2012.25,
+        "low": 0.0,
+        "mid": 0.0,
+        "high": 0.0
+      },
+      {
+        "year": 2012.5,
+        "low": 0.0,
+        "mid": 0.0,
+        "high": 0.0
+      },
+      {
+        "year": 2012.75,
+        "low": 0.0,
+        "mid": 0.0,
+        "high": 0.0
+      },
+      {
+        "year": 2013.0,
+        "low": 0.0,
+        "mid": 0.0,
+        "high": 0.0
+      },
+      {
+        "year": 2013.25,
+        "low": 0.0,
+        "mid": 0.0,
+        "high": 0.0
+      },
+      {
+        "year": 2013.5,
+        "low": 0.0,
+        "mid": 0.0,
+        "high": 0.0
+      },
+      {
+        "year": 2013.75,
+        "low": 0.0,
+        "mid": 0.0,
+        "high": 0.0
+      },
+      {
+        "year": 2014.0,
+        "low": 0.0,
+        "mid": 0.0,
+        "high": 0.0
+      },
+      {
+        "year": 2014.25,
+        "low": 0.0,
+        "mid": 0.0,
+        "high": 0.0
+      },
+      {
+        "year": 2014.5,
+        "low": 0.0,
+        "mid": 0.0,
+        "high": 0.0
+      },
+      {
+        "year": 2014.75,
+        "low": 0.0,
+        "mid": 0.0,
+        "high": 0.0
+      },
+      {
+        "year": 2015.0,
+        "low": 0.0,
+        "mid": 0.0,
+        "high": 0.0
+      },
+      {
+        "year": 2015.25,
+        "low": 0.0,
+        "mid": 0.0,
+        "high": 0.0
+      },
+      {
+        "year": 2015.5,
+        "low": 0.0,
+        "mid": 0.0,
+        "high": 1e-06
+      },
+      {
+        "year": 2015.75,
+        "low": 0.0,
+        "mid": 1e-06,
+        "high": 1e-06
+      },
+      {
+        "year": 2016.0,
+        "low": 0.0,
+        "mid": 1e-06,
+        "high": 1e-06
+      },
+      {
+        "year": 2016.25,
+        "low": 0.0,
+        "mid": 1e-06,
+        "high": 2e-06
+      },
+      {
+        "year": 2016.5,
+        "low": 0.0,
+        "mid": 1e-06,
+        "high": 3e-06
+      },
+      {
+        "year": 2016.75,
+        "low": 0.0,
+        "mid": 2e-06,
+        "high": 4e-06
+      },
+      {
+        "year": 2017.0,
+        "low": 0.0,
+        "mid": 3e-06,
+        "high": 7e-06
+      },
+      {
+        "year": 2017.25,
+        "low": 0.0,
+        "mid": 3e-06,
+        "high": 1e-05
+      },
+      {
+        "year": 2017.5,
+        "low": 0.0,
+        "mid": 5e-06,
+        "high": 1.4e-05
+      },
+      {
+        "year": 2017.75,
+        "low": 0.0,
+        "mid": 6e-06,
+        "high": 2.1e-05
+      },
+      {
+        "year": 2018.0,
+        "low": 0.0,
+        "mid": 8e-06,
+        "high": 3.1e-05
+      },
+      {
+        "year": 2018.25,
+        "low": 0.0,
+        "mid": 1.1e-05,
+        "high": 4.6e-05
+      },
+      {
+        "year": 2018.5,
+        "low": 0.0,
+        "mid": 1.5e-05,
+        "high": 6.7e-05
+      },
+      {
+        "year": 2018.75,
+        "low": 0.0,
+        "mid": 2.1e-05,
+        "high": 9.9e-05
+      },
+      {
+        "year": 2019.0,
+        "low": 0.0,
+        "mid": 2.9e-05,
+        "high": 0.000146
+      },
+      {
+        "year": 2019.25,
+        "low": 0.0,
+        "mid": 4e-05,
+        "high": 0.000217
+      },
+      {
+        "year": 2019.5,
+        "low": 0.0,
+        "mid": 5.7e-05,
+        "high": 0.000322
+      },
+      {
+        "year": 2019.75,
+        "low": 0.0,
+        "mid": 8e-05,
+        "high": 0.000478
+      },
+      {
+        "year": 2020.0,
+        "low": 0.0,
+        "mid": 0.000115,
+        "high": 0.00071
+      },
+      {
+        "year": 2020.25,
+        "low": 0.0,
+        "mid": 0.000166,
+        "high": 0.001042
+      },
+      {
+        "year": 2020.5,
+        "low": 1e-06,
+        "mid": 0.000243,
+        "high": 0.00153
+      },
+      {
+        "year": 2020.75,
+        "low": 2e-06,
+        "mid": 0.000359,
+        "high": 0.00225
+      },
+      {
+        "year": 2021.0,
+        "low": 4e-06,
+        "mid": 0.000536,
+        "high": 0.003295
+      },
+      {
+        "year": 2021.25,
+        "low": 9e-06,
+        "mid": 0.000812,
+        "high": 0.004832
+      },
+      {
+        "year": 2021.5,
+        "low": 2.1e-05,
+        "mid": 0.001246,
+        "high": 0.00713
+      },
+      {
+        "year": 2021.75,
+        "low": 4.9e-05,
+        "mid": 0.001936,
+        "high": 0.010481
+      },
+      {
+        "year": 2022.0,
+        "low": 0.000115,
+        "mid": 0.003048,
+        "high": 0.01534
+      },
+      {
+        "year": 2022.25,
+        "low": 0.000267,
+        "mid": 0.00486,
+        "high": 0.022401
+      },
+      {
+        "year": 2022.5,
+        "low": 0.000628,
+        "mid": 0.007851,
+        "high": 0.032605
+      },
+      {
+        "year": 2022.75,
+        "low": 0.001473,
+        "mid": 0.012834,
+        "high": 0.047294
+      },
+      {
+        "year": 2023.0,
+        "low": 0.00346,
+        "mid": 0.021207,
+        "high": 0.068654
+      },
+      {
+        "year": 2023.25,
+        "low": 0.00793,
+        "mid": 0.035337,
+        "high": 0.098182
+      },
+      {
+        "year": 2023.5,
+        "low": 0.018141,
+        "mid": 0.059129,
+        "high": 0.138264
+      },
+      {
+        "year": 2023.75,
+        "low": 0.040505,
+        "mid": 0.098632,
+        "high": 0.192301
+      },
+      {
+        "year": 2024.0,
+        "low": 0.087913,
+        "mid": 0.161991,
+        "high": 0.260487
+      },
+      {
+        "year": 2024.25,
+        "low": 0.175617,
+        "mid": 0.256849,
+        "high": 0.34509
+      },
+      {
+        "year": 2024.5,
+        "low": 0.312462,
+        "mid": 0.383118,
+        "high": 0.447171
+      },
+      {
+        "year": 2024.75,
+        "low": 0.470198,
+        "mid": 0.525278,
+        "high": 0.578747
+      },
+      {
+        "year": 2025.0,
+        "low": 0.600117,
+        "mid": 0.657628,
+        "high": 0.717673
+      },
+      {
+        "year": 2025.25,
+        "low": 0.68811,
+        "mid": 0.761636,
+        "high": 0.831293
+      },
+      {
+        "year": 2025.5,
+        "low": 0.74836,
+        "mid": 0.833923,
+        "high": 0.913288
+      },
+      {
+        "year": 2025.75,
+        "low": 0.784543,
+        "mid": 0.880412,
+        "high": 0.9711
+      },
+      {
+        "year": 2026.0,
+        "low": 0.802465,
+        "mid": 0.908401,
+        "high": 1.0
+      },
+      {
+        "year": 2026.25,
+        "low": 0.809912,
+        "mid": 0.924199,
+        "high": 1.0
+      },
+      {
+        "year": 2026.5,
+        "low": 0.812987,
+        "mid": 0.93268,
+        "high": 1.0
+      },
+      {
+        "year": 2026.75,
+        "low": 0.815188,
+        "mid": 0.937269,
+        "high": 1.0
+      },
+      {
+        "year": 2027.0,
+        "low": 0.816939,
+        "mid": 0.939749,
+        "high": 1.0
+      },
+      {
+        "year": 2027.25,
+        "low": 0.81791,
+        "mid": 0.941101,
+        "high": 1.0
+      },
+      {
+        "year": 2027.5,
+        "low": 0.81823,
+        "mid": 0.941863,
+        "high": 1.0
+      },
+      {
+        "year": 2027.75,
+        "low": 0.818273,
+        "mid": 0.942296,
+        "high": 1.0
+      },
+      {
+        "year": 2028.0,
+        "low": 0.818293,
+        "mid": 0.942548,
+        "high": 1.0
+      },
+      {
+        "year": 2028.25,
+        "low": 0.818302,
+        "mid": 0.942695,
+        "high": 1.0
+      },
+      {
+        "year": 2028.5,
+        "low": 0.818307,
+        "mid": 0.942782,
+        "high": 1.0
+      },
+      {
+        "year": 2028.75,
+        "low": 0.818309,
+        "mid": 0.942835,
+        "high": 1.0
+      },
+      {
+        "year": 2029.0,
+        "low": 0.81831,
+        "mid": 0.942867,
+        "high": 1.0
+      },
+      {
+        "year": 2029.25,
+        "low": 0.81831,
+        "mid": 0.942887,
+        "high": 1.0
+      },
+      {
+        "year": 2029.5,
+        "low": 0.81831,
+        "mid": 0.9429,
+        "high": 1.0
+      },
+      {
+        "year": 2029.75,
+        "low": 0.81831,
+        "mid": 0.942908,
+        "high": 1.0
+      },
+      {
+        "year": 2030.0,
+        "low": 0.81831,
+        "mid": 0.942913,
+        "high": 1.0
+      }
+    ]
+  }
+}

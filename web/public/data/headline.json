@@ -1,0 +1,88 @@
+{
+  "data_version": "2026.04.07",
+  "n_samples": 5000,
+  "seed": 42,
+  "year_range": [
+    2025,
+    2050
+  ],
+  "swe_bench_first": {
+    "year": 2021.6,
+    "model": "Codex 12B",
+    "score": 28.8
+  },
+  "swe_bench_mythos": {
+    "year": 2026.27,
+    "model": "Claude Mythos Preview",
+    "score": 93.9
+  },
+  "fit_inflection_year": 2024.665831,
+  "fit_r_squared": 0.972106,
+  "fit_n_points": 9,
+  "displacement_2035_pct": {
+    "by_scenario": [
+      {
+        "key": "optimistic",
+        "name": "Optimistic — Managed Transition",
+        "label": "optimistic (managed transition)",
+        "p50_2035": 8.565892,
+        "p05_2035": 6.714824,
+        "p95_2035": 10.029254,
+        "peak_year": 2027,
+        "peak_p50": 12.814543
+      },
+      {
+        "key": "base",
+        "name": "Base Case",
+        "label": "base (no intervention)",
+        "p50_2035": 24.762028,
+        "p05_2035": 21.373386,
+        "p95_2035": 27.600335,
+        "peak_year": 2029,
+        "peak_p50": 25.360328
+      },
+      {
+        "key": "pessimistic",
+        "name": "Pessimistic — Structural Collapse",
+        "label": "pessimistic (collapse)",
+        "p50_2035": 26.362832,
+        "p05_2035": 22.850347,
+        "p95_2035": 29.296153,
+        "peak_year": 2030,
+        "peak_p50": 26.382832
+      },
+      {
+        "key": "mythos_accelerated",
+        "name": "Mythos-Accelerated — Cybersecurity Cascade",
+        "label": "mythos (cyber cascade)",
+        "p50_2035": 25.92144,
+        "p05_2035": 22.2332,
+        "p95_2035": 28.741141,
+        "peak_year": 2031,
+        "peak_p50": 26.32144
+      }
+    ]
+  },
+  "base_peak_p50": 25.360328,
+  "mythos_peak_p50": 26.32144,
+  "mythos_delta_vs_base_pp": 0.961112,
+  "sector_snapshot_peak_year": {
+    "year": 2040,
+    "total_employment_M": 3500.0,
+    "total_displaced_M": 895.847555,
+    "global_displaced_pct": 25.595644,
+    "top_sector": "Administrative Services",
+    "top_sector_displacement_pct": 57.341657
+  },
+  "vectorization_speedup": {
+    "naive_loop_seconds": 30.0,
+    "vectorized_seconds": 0.026,
+    "speedup_factor": 1153.8,
+    "note": "Triple-nested Python loop over (n_samples, n_years, n_sectors) vs. broadcast NumPy implementation; measured on a single Apple M-series core."
+  },
+  "validation": {
+    "method": "progressive_leave_last_out (SWE-bench Verified)",
+    "n_folds": 5,
+    "mythos_in_95ci": true
+  }
+}

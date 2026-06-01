@@ -1,0 +1,241 @@
+{
+  "data_version": "2026.04.07",
+  "method": "progressive_leave_last_out (SWE-bench Verified)",
+  "n_total_points": 9,
+  "folds": [
+    {
+      "cutoff_year": 2024.6,
+      "n_train": 4,
+      "n_test": 5,
+      "fit": {
+        "L": 1.409871,
+        "k": 2.735574,
+        "x0": 2024.830296,
+        "r_squared": 0.999981,
+        "rmse": 0.000863
+      },
+      "predictions": [
+        {
+          "year": 2024.75,
+          "model": "o1-preview",
+          "actual_pct": 41.3,
+          "predicted_pct": 62.556655,
+          "ci_low_pct": 60.632313,
+          "ci_high_pct": 63.461825,
+          "in_ci_95": false
+        },
+        {
+          "year": 2024.83,
+          "model": "Claude 3.5 Sonnet (Oct)",
+          "actual_pct": 64.0,
+          "predicted_pct": 70.191282,
+          "ci_low_pct": 67.318223,
+          "ci_high_pct": 71.629293,
+          "in_ci_95": false
+        },
+        {
+          "year": 2025.1,
+          "model": "Claude Opus 4.6",
+          "actual_pct": 72.5,
+          "predicted_pct": 94.962011,
+          "ci_low_pct": 87.582602,
+          "ci_high_pct": 99.972688,
+          "in_ci_95": false
+        },
+        {
+          "year": 2025.15,
+          "model": "Claude Sonnet 4.6",
+          "actual_pct": 70.3,
+          "predicted_pct": 98.095812,
+          "ci_low_pct": 90.727576,
+          "ci_high_pct": 100.0,
+          "in_ci_95": false
+        },
+        {
+          "year": 2026.27,
+          "model": "Claude Mythos Preview",
+          "actual_pct": 93.9,
+          "predicted_pct": 99.99658,
+          "ci_low_pct": 100.0,
+          "ci_high_pct": 100.0,
+          "in_ci_95": false
+        }
+      ],
+      "coverage_95": 0.0
+    },
+    {
+      "cutoff_year": 2024.75,
+      "n_train": 5,
+      "n_test": 4,
+      "fit": {
+        "L": 0.490406,
+        "k": 4.232148,
+        "x0": 2024.160372,
+        "r_squared": 0.963497,
+        "rmse": 0.036799
+      },
+      "predictions": [
+        {
+          "year": 2024.83,
+          "model": "Claude 3.5 Sonnet (Oct)",
+          "actual_pct": 64.0,
+          "predicted_pct": 41.345831,
+          "ci_low_pct": 24.589229,
+          "ci_high_pct": 52.580745,
+          "in_ci_95": false
+        },
+        {
+          "year": 2025.1,
+          "model": "Claude Opus 4.6",
+          "actual_pct": 72.5,
+          "predicted_pct": 43.678818,
+          "ci_low_pct": 23.453573,
+          "ci_high_pct": 57.821362,
+          "in_ci_95": false
+        },
+        {
+          "year": 2025.15,
+          "model": "Claude Sonnet 4.6",
+          "actual_pct": 70.3,
+          "predicted_pct": 43.961765,
+          "ci_low_pct": 23.433936,
+          "ci_high_pct": 58.65277,
+          "in_ci_95": false
+        },
+        {
+          "year": 2026.27,
+          "model": "Claude Mythos Preview",
+          "actual_pct": 93.9,
+          "predicted_pct": 46.238564,
+          "ci_low_pct": 19.02063,
+          "ci_high_pct": 65.855703,
+          "in_ci_95": false
+        }
+      ],
+      "coverage_95": 0.0
+    },
+    {
+      "cutoff_year": 2024.83,
+      "n_train": 6,
+      "n_test": 3,
+      "fit": {
+        "L": 0.844651,
+        "k": 2.746601,
+        "x0": 2024.563572,
+        "r_squared": 0.933345,
+        "rmse": 0.058287
+      },
+      "predictions": [
+        {
+          "year": 2025.1,
+          "model": "Claude Opus 4.6",
+          "actual_pct": 72.5,
+          "predicted_pct": 54.268799,
+          "ci_low_pct": 0.0,
+          "ci_high_pct": 100.0,
+          "in_ci_95": true
+        },
+        {
+          "year": 2025.15,
+          "model": "Claude Sonnet 4.6",
+          "actual_pct": 70.3,
+          "predicted_pct": 55.364871,
+          "ci_low_pct": 0.0,
+          "ci_high_pct": 100.0,
+          "in_ci_95": true
+        },
+        {
+          "year": 2026.27,
+          "model": "Claude Mythos Preview",
+          "actual_pct": 93.9,
+          "predicted_pct": 64.092899,
+          "ci_low_pct": 0.0,
+          "ci_high_pct": 100.0,
+          "in_ci_95": true
+        }
+      ],
+      "coverage_95": 1.0
+    },
+    {
+      "cutoff_year": 2025.1,
+      "n_train": 7,
+      "n_test": 2,
+      "fit": {
+        "L": 0.966511,
+        "k": 2.527575,
+        "x0": 2024.672392,
+        "r_squared": 0.953794,
+        "rmse": 0.054143
+      },
+      "predictions": [
+        {
+          "year": 2025.15,
+          "model": "Claude Sonnet 4.6",
+          "actual_pct": 70.3,
+          "predicted_pct": 66.462134,
+          "ci_low_pct": 20.08225,
+          "ci_high_pct": 85.628909,
+          "in_ci_95": true
+        },
+        {
+          "year": 2026.27,
+          "model": "Claude Mythos Preview",
+          "actual_pct": 93.9,
+          "predicted_pct": 81.460561,
+          "ci_low_pct": 20.144101,
+          "ci_high_pct": 100.0,
+          "in_ci_95": true
+        }
+      ],
+      "coverage_95": 1.0
+    },
+    {
+      "cutoff_year": 2025.15,
+      "n_train": 8,
+      "n_test": 1,
+      "fit": {
+        "L": 0.887381,
+        "k": 2.677963,
+        "x0": 2024.60199,
+        "r_squared": 0.960259,
+        "rmse": 0.051552
+      },
+      "predictions": [
+        {
+          "year": 2026.27,
+          "model": "Claude Mythos Preview",
+          "actual_pct": 93.9,
+          "predicted_pct": 82.408692,
+          "ci_low_pct": 44.800528,
+          "ci_high_pct": 100.0,
+          "in_ci_95": true
+        }
+      ],
+      "coverage_95": 1.0
+    }
+  ],
+  "leave_last_out_mythos": {
+    "cutoff_year": 2025.15,
+    "n_train": 8,
+    "n_test": 1,
+    "fit": {
+      "L": 0.887381,
+      "k": 2.677963,
+      "x0": 2024.60199,
+      "r_squared": 0.960259,
+      "rmse": 0.051552
+    },
+    "predictions": [
+      {
+        "year": 2026.27,
+        "model": "Claude Mythos Preview",
+        "actual_pct": 93.9,
+        "predicted_pct": 82.408692,
+        "ci_low_pct": 44.800528,
+        "ci_high_pct": 100.0,
+        "in_ci_95": true
+      }
+    ],
+    "coverage_95": 1.0
+  }
+}

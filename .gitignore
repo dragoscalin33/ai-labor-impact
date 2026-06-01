@@ -56,3 +56,11 @@ artifacts/tmp/
 
 # Streamlit secrets — never commit
 .streamlit/secrets.toml
+
+# Next.js / web vitrine
+web/.next
+web/node_modules
+web/.vercel
+web/out
+web/next-env.d.ts
+

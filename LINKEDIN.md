@@ -1,62 +1,60 @@
-# LinkedIn launch — copy / paste templates
+# LinkedIn launch drafts
 
-Two drafts. Pick one, replace `[…]` placeholders, post.
+## Winner — finding-first::hookA (tightened)
 
----
+A logistic curve fit on 8 SWE-bench data points predicted Claude Mythos Preview would score 82.4% in April 2026.
 
-## 1 · Standard launch post
+Actual: 93.9%. Inside the 95% CI.
 
-> Project release: an observatory of how AI capability progression projects onto global labour displacement. Reproducible, Bayesian, end-to-end.
->
-> Live dashboard, no install, no API key required: [https://ai-labor-impact.streamlit.app]
-> Repo: [https://github.com/dragoscalin33/ai-labor-impact]
->
-> Methodology
->
-> — Logistic curve fitted to published SWE-bench, HumanEval and MMLU scores by bounded non-linear least squares. Parameter uncertainty is propagated via Monte Carlo draws of the fit covariance.
->
-> — Vectorised Monte Carlo over (samples × years × sectors). n = 5,000 over 26 years and 11 sectors completes in ~26 ms on a laptop; the equivalent triple-nested Python loop took ~30 s.
->
-> — Hierarchical Bayesian sector-risk model in PyMC, non-centred parameterisation. Partial pooling regularises the consensus estimates from McKinsey, WEF and OECD.
->
-> — Leave-last-out temporal cross-validation. The sigmoid fitted exclusively on SWE-bench data published before April 2026 placed the Claude Mythos Preview observation (93.9 %) within its 95 % confidence interval.
->
-> — Every fit and every Monte Carlo run is logged to MLflow with seed, data version and serialised FitResult.
->
-> Headline numbers, peak unemployment with full uncertainty propagation, four named scenarios:
->
-> — Optimistic, managed transition: 12 – 18 %
-> — Base, no major intervention: 28 – 38 %
-> — Pessimistic, structural collapse: 45 – 58 %
-> — Mythos-accelerated, cybersecurity cascade: 35 – 52 %, with crisis dynamics from 2027
->
-> Stack: Python, NumPy, SciPy, PyMC, MLflow, Streamlit, Plotly, Docker, GitHub Actions. Type-checked, ruff-clean, tested on Python 3.10, 3.11 and 3.12.
->
-> Open to conversations about ML engineering work — DMs are open.
+That is the leave-last-out test from a project I have been building: a reproducible model of how AI capability progression maps onto sector-by-sector labour displacement.
 
----
+What is under the hood:
 
-## 2 · Short cross-post (Twitter / Bluesky / Mastodon)
+- Sigmoid fit to 9 SWE-bench Verified results from 2021 to 2026. R-squared 0.972, inflection year 2024.67
+- Progressive leave-last-out and rolling-origin cross-validation across 5 folds
+- Vectorised Monte Carlo, 5000 samples, seed 42, single NumPy broadcast over (samples, years, sectors). 0.026 seconds versus 30 seconds for the triple-nested Python loop. 1153x speedup
+- Hierarchical Bayesian PyMC layer on sector susceptibility, non-centred parameterisation, drop-in replacement for the truncated-normal draws
+- Four scenarios: optimistic, base, pessimistic, and a Mythos-accelerated cybersecurity cascade
 
-> Released a reproducible Bayesian observatory of how AI capability progression maps onto global labour displacement. Vectorised Monte Carlo, hierarchical PyMC, temporal cross-validation. Live, no install: [https://ai-labor-impact.streamlit.app]. Repo: [https://github.com/dragoscalin33/ai-labor-impact].
+Base case: median peak displacement 25.4% in 2029, 95% interval 21.4 to 27.6 percentage points by 2035.
 
----
+The Mythos-accelerated path adds under 1 percentage point at peak versus the base case. The catastrophe is not the headline benchmark jump. It is the sector concentration: Administrative Services hits 57.3% by 2040.
 
-## Posting checklist
+Live site: __VERCEL_URL__
+Code: https://github.com/dragoscalin33/ai-labor-impact
 
-- Replace the placeholder Streamlit URL once the deploy is live.
-- Add a screenshot or short screen-capture as the post media. The Monte Carlo fan chart (Unemployment scenarios tab) reads cleanest.
-- Pin the post to your profile.
-- Update the LinkedIn headline to a single line: *Machine Learning Engineer · Reproducible, Bayesian, end-to-end ML pipelines.*
-- Add the demo and repo links to the *Featured* section.
-- Reply to comments within the first twelve hours. That window drives most of the reach on LinkedIn.
+## Runner-up — methodology-first::hookB
 
-## Asset suggestions
+Reporting R² = 0.97 on the training data is not evidence that a forecast is predictive.
 
-Three screenshots worth taking:
+The honest test is out-of-sample.
 
-1. The fan chart on the *Unemployment scenarios* tab. Strongest single image.
-2. The *Capability curve* tab with the Mythos data point at the right edge of the sigmoid.
-3. The leave-last-out scatter from `notebooks/05_temporal_validation.ipynb` showing Mythos inside the 95 % CI. Strongest narrative image for technical reviewers.
+That single sentence shaped most of the design choices in this project: AI Labor Market Impact Observatory, a reproducible model of how AI capability progression maps onto global labour displacement.
 
-If you record a short screen capture, focus on moving the *Monte Carlo samples* slider and switching between scenarios. That communicates *real Monte Carlo, interactive* in roughly six seconds without any voice-over.
+What that commitment looks like in code:
+
+— Leave-last-out and rolling-origin temporal cross-validation on the SWE-bench Verified series. For each cutoff, the sigmoid is refit on prior data only, and the held-out observation is compared against the 95 percent CI. Fitting only on data published before April 2026 placed Claude Mythos Preview (93.9 percent) inside the CI.
+
+— A logistic curve fitted by bounded non-linear least squares to SWE-bench, HumanEval and MMLU. Predictive uncertainty propagated by sampling parameters from the fit covariance, not by bootstrapping.
+
+— Employment baselines pulled live from the World Bank Open Data API.
+
+— Sector risks as truncated normals calibrated to McKinsey, WEF and OECD, with a hierarchical Bayesian PyMC model (non-centred parameterisation, partial pooling) as a drop-in alternative.
+
+— Vectorised Monte Carlo over (samples, years, sectors). n = 5,000 over 26 years and 11 sectors completes in roughly 26 ms; the naive triple-nested loop took ~30 s.
+
+— Every fit and every run logged with seed, data version and serialised FitResult. Reproducibility before novelty.
+
+Four named scenarios, peak unemployment with full uncertainty propagation:
+
+Optimistic, managed transition: 12 to 18 percent
+Base, no intervention: 28 to 38 percent
+Pessimistic, structural collapse: 45 to 58 percent
+Mythos-accelerated, cybersecurity cascade: 35 to 52 percent
+
+Site: __VERCEL_URL__
+Repo: https://github.com/dragoscalin33/ai-labor-impact
+
+## Synthesis notes
+
+Picked finding-first::hookA as the winner because it leads with the most concrete falsifiable claim in the entire candidate set — a precise number (82.4% predicted, 93.9% actual) that survives LinkedIn's 200-char truncation and forces the reader to keep scrolling to understand how the prediction was made. The tightened variant folds the inflection year into the R-squared bullet, sharpens the Monte Carlo bullet to name the NumPy broadcast explicitly, and adds the non-centred parameterisation detail to the PyMC bullet — all signals of ML engineering craft without the methodology-essay framing of the other angles. Runner-up is methodology-first::hookB because it tests a different opening (a discipline statement, not a finding) and so will A/B against the winner on a meaningfully different audience reaction. All numbers cross-checked against web/public/data/headline.json (lines 19-20 for R-squared and inflection, 41-42 for base peak, 66-68 for Mythos delta, 70-76 for sector snapshot, 77-82 for speedup) and web/public/data/validation.json (lines 203-214 for the 8-point leave-last-out fit predicting 82.4% with Mythos inside the 95% CI). Both drafts honour the no-emoji, no-job-seeking, no-invented-statistics rules.

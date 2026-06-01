@@ -1,4 +1,4 @@
-.PHONY: install install-dev test lint format dashboard notebook clean
+.PHONY: install install-dev test lint format dashboard notebook clean web-artifacts
 
 # ── Setup ─────────────────────────────────────────────────────────────────────
 
@@ -30,6 +30,9 @@ dashboard:
 
 notebook:
 	jupyter lab notebooks/
+
+web-artifacts:
+	/opt/anaconda3/bin/python3 scripts/precompute_web_artifacts.py
 
 # ── Cleanup ───────────────────────────────────────────────────────────────────
 
