@@ -35,11 +35,26 @@ does neither.
 
 ## Quickstart
 
+The fastest way to evaluate this project is to open the deployed site:
+
+> **<https://ai-labor-impact.vercel.app>** — no installation, no API key.
+
+The site loads precomputed JSON artefacts straight from the Python pipeline
+described below, so every number on it is reproducible from this repo.
+
+### Run the model locally
+
 ```bash
 git clone https://github.com/dragoscalin33/ai-labor-impact.git
 cd ai-labor-impact
 pip install -r requirements.txt
-streamlit run app/dashboard.py            # http://localhost:8501
+python scripts/precompute_web_artifacts.py    # rebuilds web/public/data/*.json
+```
+
+For an interactive Streamlit view of the same model:
+
+```bash
+streamlit run app/dashboard.py                # http://localhost:8501
 ```
 
 For the Bayesian and tracking notebooks:
@@ -47,19 +62,28 @@ For the Bayesian and tracking notebooks:
 ```bash
 pip install -r requirements-dev.txt
 jupyter lab notebooks/
-mlflow ui                                  # http://localhost:5000
+mlflow ui                                     # http://localhost:5000
 ```
 
-Or with Docker:
+### Run the deployed site locally
+
+```bash
+cd web
+npm install
+npm run dev                                   # http://localhost:3000
+```
+
+Or run everything containerised:
 
 ```bash
 docker compose up --build
 ```
 
-The dashboard works without any LLM API key: a curated narrative cache
-(`data/insights_cache.json`) provides per-scenario commentary out of the
-box. Adding a free [Groq](https://console.groq.com) key in the sidebar
-swaps the cache for live LLM generation; it is never required.
+The site works without any LLM API key: a curated narrative cache
+(`data/insights_cache.json`, exposed at `/data/insights.json` on the site)
+provides per-scenario commentary out of the box. Setting `GROQ_API_KEY` on
+the Vercel project swaps the cache for live LLM generation via the Vercel AI
+SDK; it is never required.
 
 ---
 

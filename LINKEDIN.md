@@ -45,12 +45,14 @@ What that commitment looks like in code:
 
 — Every fit and every run logged with seed, data version and serialised FitResult. Reproducibility before novelty.
 
-Four named scenarios, peak unemployment with full uncertainty propagation:
+Four named scenarios, peak displacement with full uncertainty propagation (95 percent Monte Carlo interval, n = 5000):
 
-Optimistic, managed transition: 12 to 18 percent
-Base, no intervention: 28 to 38 percent
-Pessimistic, structural collapse: 45 to 58 percent
-Mythos-accelerated, cybersecurity cascade: 35 to 52 percent
+Optimistic, managed transition: peak 12.8 percent in 2027 — 6.7 to 10.0 percent at 2035
+Base, no intervention: peak 25.4 percent in 2029 — 21.4 to 27.6 percent at 2035
+Pessimistic, structural collapse: peak 26.4 percent in 2030 — 22.9 to 29.3 percent at 2035
+Mythos-accelerated, cybersecurity cascade: peak 26.3 percent in 2031 — 22.2 to 28.7 percent at 2035
+
+A note the headline misses: under the fitted SWE-bench curve the high-displacement scenarios converge, because the AI capability sigmoid saturates around 2030 regardless of which intervention path you assume. The real spread sits in the sector concentration, not the global peak — Administrative Services hits 57 percent by 2040.
 
 Site: https://ai-labor-impact.vercel.app
 Repo: https://github.com/dragoscalin33/ai-labor-impact
