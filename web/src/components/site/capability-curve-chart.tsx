@@ -32,53 +32,65 @@ interface Props {
   data: BenchmarksData;
 }
 
-interface FitRow {
+interface MergedRow {
   year: number;
-  fit_low: number;
-  fit_mid: number;
-  fit_high: number;
+  fit_low?: number;
+  fit_mid?: number;
+  fit_high?: number;
+  swe_bench_score?: number;
+  swe_bench_model?: string;
+  humaneval_score?: number;
+  humaneval_model?: string;
+  mmlu_score?: number;
+  mmlu_model?: string;
 }
 
-interface PointRow {
-  year: number;
-  score_pct: number;
-  benchmark: string;
-  model: string;
-}
+const SCATTER_LOOKUP: Record<
+  string,
+  { modelKey: keyof MergedRow; benchLabel: string }
+> = {
+  swe_bench_score: { modelKey: "swe_bench_model", benchLabel: "SWE-bench" },
+  humaneval_score: { modelKey: "humaneval_model", benchLabel: "HumanEval" },
+  mmlu_score: { modelKey: "mmlu_model", benchLabel: "MMLU" },
+};
 
-function makeFitSeries(data: BenchmarksData): FitRow[] {
-  return data.fit.ci_grid
-    .filter((p) => p.year >= 2018 && p.year <= 2030)
-    .map((p) => ({
-      year: Number(p.year.toFixed(2)),
+function buildMergedSeries(data: BenchmarksData): MergedRow[] {
+  const yearMap = new Map<number, MergedRow>();
+
+  for (const p of data.fit.ci_grid) {
+    if (p.year < 2018 || p.year > 2030) continue;
+    const y = Number(p.year.toFixed(2));
+    yearMap.set(y, {
+      year: y,
       fit_low: Number((p.low * 100).toFixed(2)),
       fit_mid: Number((p.mid * 100).toFixed(2)),
       fit_high: Number((p.high * 100).toFixed(2)),
-    }));
-}
-
-function makePointsByBenchmark(data: BenchmarksData): Record<string, PointRow[]> {
-  const out: Record<string, PointRow[]> = {
-    swe_bench: [],
-    humaneval: [],
-    mmlu: [],
-  };
-  for (const p of data.series) {
-    if (!out[p.benchmark]) continue;
-    out[p.benchmark].push({
-      year: p.year,
-      score_pct: p.score,
-      benchmark: p.benchmark,
-      model: p.model,
     });
   }
-  return out;
+
+  for (const p of data.series) {
+    const y = Number(p.year.toFixed(2));
+    const row = yearMap.get(y) ?? { year: y };
+    if (p.benchmark === "swe_bench") {
+      row.swe_bench_score = p.score;
+      row.swe_bench_model = p.model;
+    } else if (p.benchmark === "humaneval") {
+      row.humaneval_score = p.score;
+      row.humaneval_model = p.model;
+    } else if (p.benchmark === "mmlu") {
+      row.mmlu_score = p.score;
+      row.mmlu_model = p.model;
+    }
+    yearMap.set(y, row);
+  }
+
+  return Array.from(yearMap.values()).sort((a, b) => a.year - b.year);
 }
 
 interface TooltipPayloadItem {
   dataKey: string;
-  payload: PointRow | FitRow;
-  value: number;
+  payload: MergedRow;
+  value: number | undefined;
 }
 
 interface ChartTooltipProps {
@@ -89,29 +101,38 @@ interface ChartTooltipProps {
 
 function ChartTooltip({ active, payload, label }: ChartTooltipProps) {
   if (!active || !payload || payload.length === 0) return null;
-  const pointRows = payload.filter(
-    (entry): entry is TooltipPayloadItem & { payload: PointRow } =>
-      entry.dataKey === "score_pct" && "model" in entry.payload
+
+  const pointRows = payload
+    .filter((entry) => entry.dataKey in SCATTER_LOOKUP && entry.value != null)
+    .map((entry) => {
+      const cfg = SCATTER_LOOKUP[entry.dataKey];
+      const model = entry.payload[cfg.modelKey] as string | undefined;
+      return {
+        key: entry.dataKey,
+        model: model ?? "—",
+        benchLabel: cfg.benchLabel,
+        score: entry.value as number,
+      };
+    });
+
+  const fitRow = payload.find(
+    (entry) => entry.dataKey === "fit_mid" && entry.value != null
   );
-  const fitRow = payload.find((entry) => entry.dataKey === "fit_mid");
 
   return (
     <div className="rounded-md border border-border bg-background/95 px-3 py-2 text-xs shadow-sm">
       <div className="font-medium text-foreground">
         Year {typeof label === "number" ? label.toFixed(2) : label}
       </div>
-      {pointRows.map((row, idx) => {
-        const p = row.payload;
-        return (
-          <div key={`${p.model}-${idx}`} className="mt-1 text-muted-foreground">
-            <span className="text-foreground">{p.model}</span> ·{" "}
-            {BENCHMARK_LABELS[p.benchmark] ?? p.benchmark} · {p.score_pct.toFixed(1)} %
-          </div>
-        );
-      })}
+      {pointRows.map((row) => (
+        <div key={row.key} className="mt-1 text-muted-foreground">
+          <span className="text-foreground">{row.model}</span> · {row.benchLabel} ·{" "}
+          {row.score.toFixed(1)} %
+        </div>
+      ))}
       {fitRow ? (
         <div className="mt-1 text-muted-foreground">
-          SWE-bench fit: {(fitRow.value).toFixed(1)} %
+          SWE-bench fit: {(fitRow.value as number).toFixed(1)} %
         </div>
       ) : null}
     </div>
@@ -119,8 +140,7 @@ function ChartTooltip({ active, payload, label }: ChartTooltipProps) {
 }
 
 export function CapabilityCurveChart({ data }: Props) {
-  const fitSeries = makeFitSeries(data);
-  const pointsByBench = makePointsByBenchmark(data);
+  const series = buildMergedSeries(data);
 
   const mythos = data.series.find(
     (p) => p.model === "Claude Mythos Preview" && p.benchmark === "swe_bench"
@@ -149,7 +169,7 @@ export function CapabilityCurveChart({ data }: Props) {
       >
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
-            data={fitSeries}
+            data={series}
             margin={{ top: 16, right: 24, left: 8, bottom: 32 }}
           >
             <CartesianGrid stroke="var(--chart-grid)" strokeDasharray="3 3" />
@@ -222,11 +242,16 @@ export function CapabilityCurveChart({ data }: Props) {
               isAnimationActive={false}
               name="SWE-bench fit (median)"
             />
-            {(["swe_bench", "humaneval", "mmlu"] as const).map((bench) => (
+            {(
+              [
+                { bench: "swe_bench", dataKey: "swe_bench_score" },
+                { bench: "humaneval", dataKey: "humaneval_score" },
+                { bench: "mmlu", dataKey: "mmlu_score" },
+              ] as const
+            ).map(({ bench, dataKey }) => (
               <Scatter
                 key={bench}
-                data={pointsByBench[bench]}
-                dataKey="score_pct"
+                dataKey={dataKey}
                 fill={BENCHMARK_COLORS[bench]}
                 shape={bench === "swe_bench" ? "circle" : "triangle"}
                 name={BENCHMARK_LABELS[bench]}

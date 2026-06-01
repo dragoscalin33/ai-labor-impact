@@ -1,9 +1,57 @@
+import { Fragment } from "react";
+
 import { ScenarioFanChart } from "@/components/site/scenario-fan-chart";
 import { ScenariosTabs } from "@/components/site/scenarios-tabs";
 import { SectionHeading } from "@/components/site/section-heading";
 import { TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getHeadline, getScenarios } from "@/lib/data";
 import type { ScenarioKey, ScenarioSeries } from "@/lib/types";
+
+function renderInline(text: string, baseKey: string): React.ReactNode[] {
+  const nodes: React.ReactNode[] = [];
+  const boldRe = /\*\*([^*]+)\*\*/g;
+  let cursor = 0;
+  let match: RegExpExecArray | null;
+  let idx = 0;
+  while ((match = boldRe.exec(text)) !== null) {
+    if (match.index > cursor) {
+      nodes.push(renderItalic(text.slice(cursor, match.index), `${baseKey}-t${idx++}`));
+    }
+    nodes.push(
+      <strong key={`${baseKey}-b${idx++}`} className="font-medium text-foreground">
+        {match[1]}
+      </strong>
+    );
+    cursor = boldRe.lastIndex;
+  }
+  if (cursor < text.length) {
+    nodes.push(renderItalic(text.slice(cursor), `${baseKey}-t${idx++}`));
+  }
+  return nodes;
+}
+
+function renderItalic(text: string, baseKey: string): React.ReactNode {
+  const italicRe = /\*([^*]+)\*/g;
+  const out: React.ReactNode[] = [];
+  let cursor = 0;
+  let match: RegExpExecArray | null;
+  let idx = 0;
+  while ((match = italicRe.exec(text)) !== null) {
+    if (match.index > cursor) {
+      out.push(<Fragment key={`${baseKey}-r${idx++}`}>{text.slice(cursor, match.index)}</Fragment>);
+    }
+    out.push(
+      <em key={`${baseKey}-i${idx++}`} className="italic">
+        {match[1]}
+      </em>
+    );
+    cursor = italicRe.lastIndex;
+  }
+  if (cursor < text.length) {
+    out.push(<Fragment key={`${baseKey}-r${idx++}`}>{text.slice(cursor)}</Fragment>);
+  }
+  return <>{out}</>;
+}
 
 const SHORT_LABEL: Record<ScenarioKey, string> = {
   optimistic: "Optimistic",
@@ -53,13 +101,12 @@ interface ScenarioPanelProps {
 }
 
 function ScenarioPanel({ series, years, peakInfo }: ScenarioPanelProps) {
+  const paragraphs = series.narrative.split(/\n+/).filter((p) => p.trim().length > 0);
   return (
-    <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
-      <div>
-        <ScenarioFanChart series={series} years={years} />
-      </div>
-      <div className="flex flex-col gap-4">
-        <div className="grid grid-cols-2 gap-3">
+    <div className="space-y-8">
+      <ScenarioFanChart series={series} years={years} />
+      <div className="grid gap-8 lg:grid-cols-[240px_1fr]">
+        <div className="flex flex-col gap-3">
           <KpiTile
             label="Peak year"
             value={String(peakInfo.year)}
@@ -71,10 +118,10 @@ function ScenarioPanel({ series, years, peakInfo }: ScenarioPanelProps) {
             sub={`median ${peakInfo.p50.toFixed(1)} %`}
           />
         </div>
-        <div className="text-sm leading-relaxed text-muted-foreground">
-          {series.narrative.split(/\n+/).map((para, i) => (
+        <div className="max-w-[640px] text-sm leading-relaxed text-muted-foreground">
+          {paragraphs.map((para, i) => (
             <p key={i} className="mb-3 last:mb-0">
-              {para}
+              {renderInline(para, `p${i}`)}
             </p>
           ))}
         </div>

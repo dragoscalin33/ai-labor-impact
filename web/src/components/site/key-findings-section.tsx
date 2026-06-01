@@ -68,7 +68,7 @@ export async function KeyFindingsSection() {
           {cards.map((card) => (
             <Card key={card.label} className="h-full">
               <CardContent className="flex h-full flex-col gap-2 py-2">
-                <div className="font-heading text-4xl font-medium tracking-tight tabular-nums text-foreground sm:text-[2.5rem]">
+                <div className="font-heading whitespace-nowrap text-[1.75rem] font-medium tracking-tight tabular-nums text-foreground sm:text-[1.875rem] lg:text-[2rem] xl:text-[2.25rem]">
                   {card.value}
                 </div>
                 <div className="text-sm font-medium text-foreground">

@@ -3,19 +3,14 @@ import { ImageResponse } from "next/og";
 import { getHeadline } from "@/lib/data";
 
 export const alt =
-  "AI Labor Market Impact Observatory — reproducible model of AI capability progression mapped onto labour displacement.";
+  "AI Labor Market Impact Observatory — a sigmoid fit on 8 SWE-bench data points placed Claude Mythos Preview inside its 95 % CI.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default async function Image() {
   const headline = await getHeadline();
-  const base = headline.displacement_2035_pct.by_scenario.find(
-    (s) => s.key === "base"
-  );
-  const baseRange = base
-    ? `${base.p05_2035.toFixed(1)}–${base.p95_2035.toFixed(1)} %`
-    : "—";
-  const peakLine = base ? `Peak ${base.peak_p50.toFixed(1)} % at ${base.peak_year}` : "";
+  const mythosActual = headline.swe_bench_mythos.score.toFixed(1);
+  const inflection = headline.fit_inflection_year.toFixed(2);
 
   return new ImageResponse(
     (
@@ -25,9 +20,10 @@ export default async function Image() {
           height: "100%",
           display: "flex",
           flexDirection: "column",
+          justifyContent: "space-between",
           backgroundColor: "#0f172a",
           color: "#f8fafc",
-          padding: "72px",
+          padding: "64px 72px",
           fontFamily: "Inter, system-ui, sans-serif",
         }}
       >
@@ -62,74 +58,117 @@ export default async function Image() {
           <span>AI Labor Market Impact Observatory</span>
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            marginTop: "56px",
-            fontSize: "56px",
-            lineHeight: 1.1,
-            fontWeight: 500,
-            letterSpacing: "-0.02em",
-            maxWidth: "1000px",
-          }}
-        >
-          A reproducible model of AI capability progression mapped onto labour
-          displacement.
+        <div style={{ display: "flex", flexDirection: "column", gap: "40px" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "flex-end",
+              gap: "56px",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+                gap: "12px",
+              }}
+            >
+              <div
+                style={{
+                  fontSize: "20px",
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  color: "#94a3b8",
+                }}
+              >
+                Predicted
+              </div>
+              <div
+                style={{
+                  fontSize: "152px",
+                  fontWeight: 500,
+                  letterSpacing: "-0.03em",
+                  lineHeight: 1,
+                  color: "#94a3b8",
+                  fontVariantNumeric: "tabular-nums",
+                }}
+              >
+                82.4 %
+              </div>
+            </div>
+            <div
+              style={{
+                fontSize: "100px",
+                lineHeight: 1,
+                color: "#475569",
+                paddingBottom: "32px",
+              }}
+            >
+              →
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+                gap: "12px",
+              }}
+            >
+              <div
+                style={{
+                  fontSize: "20px",
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  color: "#f8fafc",
+                }}
+              >
+                Actual
+              </div>
+              <div
+                style={{
+                  fontSize: "152px",
+                  fontWeight: 500,
+                  letterSpacing: "-0.03em",
+                  lineHeight: 1,
+                  color: "#f8fafc",
+                  fontVariantNumeric: "tabular-nums",
+                }}
+              >
+                {`${mythosActual} %`}
+              </div>
+            </div>
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              fontSize: "30px",
+              lineHeight: 1.35,
+              color: "#cbd5e1",
+              maxWidth: "1020px",
+              letterSpacing: "-0.005em",
+            }}
+          >
+            {`A sigmoid fit on 8 SWE-bench data points placed Claude Mythos Preview inside its 95 % CI. Inflection year ${inflection}.`}
+          </div>
         </div>
 
         <div
           style={{
             display: "flex",
-            marginTop: "auto",
             justifyContent: "space-between",
             alignItems: "flex-end",
             gap: "32px",
+            fontSize: "20px",
+            color: "#94a3b8",
           }}
         >
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-            <div
-              style={{
-                fontSize: "16px",
-                letterSpacing: "0.16em",
-                textTransform: "uppercase",
-                color: "#94a3b8",
-              }}
-            >
-              Base scenario · 2035 displacement (95 % MC)
-            </div>
-            <div
-              style={{
-                fontSize: "72px",
-                fontWeight: 500,
-                letterSpacing: "-0.02em",
-                color: "#f8fafc",
-              }}
-            >
-              {baseRange}
-            </div>
-            <div style={{ fontSize: "20px", color: "#cbd5e1" }}>{peakLine}</div>
-          </div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-end",
-              gap: "6px",
-              fontSize: "18px",
-              color: "#94a3b8",
-            }}
-          >
-            <div style={{ color: "#f8fafc", fontWeight: 500 }}>
-              Dragos Calin · ML Engineer
-            </div>
-            <div>github.com/dragoscalin33/ai-labor-impact</div>
-          </div>
+          <span>Dragos Calin · ML Engineer</span>
+          <span>github.com/dragoscalin33/ai-labor-impact</span>
         </div>
       </div>
     ),
-    {
-      ...size,
-    }
+    { ...size }
   );
 }

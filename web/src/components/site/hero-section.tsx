@@ -19,7 +19,7 @@ export async function HeroSection() {
   return (
     <section
       id="top"
-      className="relative flex min-h-[calc(100vh-3.5rem)] flex-col justify-center px-6 py-24"
+      className="relative px-6 pt-20 pb-16"
     >
       <div className="mx-auto w-full max-w-[1080px]">
         <p className="mb-6 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
@@ -64,7 +64,7 @@ export async function HeroSection() {
           </Button>
         </div>
 
-        <div className="mt-20 border-t border-border/70 pt-8">
+        <div className="mt-16 border-t border-border/70 pt-8">
           <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
             Verified data sources
           </p>
