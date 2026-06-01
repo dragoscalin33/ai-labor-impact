@@ -8,7 +8,7 @@ export async function ValidationSection() {
   const mythosPred = mythosFold.predictions[0];
 
   return (
-    <section id="validation" className="border-t border-border/60 px-6 py-24">
+    <section id="validation" className="border-t border-border/60 px-6 py-16">
       <div className="mx-auto w-full max-w-[1080px]">
         <SectionHeading
           accent="emerald"

@@ -147,7 +147,7 @@ export async function ScenariosSection() {
   }
 
   return (
-    <section id="scenarios" className="border-t border-border/60 px-6 py-24">
+    <section id="scenarios" className="border-t border-border/60 px-6 py-16">
       <div className="mx-auto w-full max-w-[1080px]">
         <SectionHeading
           accent="amber"

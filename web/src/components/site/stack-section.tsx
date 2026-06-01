@@ -52,7 +52,7 @@ export function StackSection() {
   return (
     <section
       id="stack"
-      className="border-t border-border/60 bg-muted/30 px-6 py-24"
+      className="border-t border-border/60 px-6 py-16"
     >
       <div className="mx-auto w-full max-w-[1080px]">
         <SectionHeading

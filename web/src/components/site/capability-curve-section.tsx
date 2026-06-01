@@ -7,7 +7,7 @@ export async function CapabilityCurveSection() {
   const data = await getBenchmarks();
 
   return (
-    <section id="curve" className="border-t border-border/60 bg-muted/30 px-6 py-24">
+    <section id="curve" className="border-t border-border/60 px-6 py-16">
       <div className="mx-auto w-full max-w-[1080px]">
         <SectionHeading
           accent="violet"

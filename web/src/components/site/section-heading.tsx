@@ -31,7 +31,7 @@ export function SectionHeading({
 }: SectionHeadingProps) {
   const accentStyle = ACCENTS[accent];
   return (
-    <div className={cn("mb-12 max-w-3xl", className)}>
+    <div className={cn("mb-8 max-w-3xl", className)}>
       <p
         className={cn(
           "flex items-center gap-3 text-xs font-medium uppercase tracking-[0.16em]",
