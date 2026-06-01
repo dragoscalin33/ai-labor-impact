@@ -20,7 +20,7 @@ Base case: median peak displacement 25.4% in 2029, 95% interval 21.4 to 27.6 per
 
 The Mythos-accelerated path adds under 1 percentage point at peak versus the base case. The catastrophe is not the headline benchmark jump. It is the sector concentration: Administrative Services hits 57.3% by 2040.
 
-Live site: __VERCEL_URL__
+Live site: https://ai-labor-impact.vercel.app
 Code: https://github.com/dragoscalin33/ai-labor-impact
 
 ## Runner-up — methodology-first::hookB
@@ -52,7 +52,7 @@ Base, no intervention: 28 to 38 percent
 Pessimistic, structural collapse: 45 to 58 percent
 Mythos-accelerated, cybersecurity cascade: 35 to 52 percent
 
-Site: __VERCEL_URL__
+Site: https://ai-labor-impact.vercel.app
 Repo: https://github.com/dragoscalin33/ai-labor-impact
 
 ## Synthesis notes

@@ -10,7 +10,7 @@ auditable.
 [![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-informational)](pyproject.toml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-informational)](LICENSE)
 
-Live dashboard: [ai-labor-impact.streamlit.app](https://ai-labor-impact.streamlit.app)
+Live site: [ai-labor-impact.vercel.app](https://ai-labor-impact.vercel.app)
 (no installation, no API key).
 
 ---
